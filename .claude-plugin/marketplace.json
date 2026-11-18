@@ -1,0 +1,28 @@
+{
+  "name": "serdar-flutter-skills",
+  "owner": {
+    "name": "Serdar"
+  },
+  "metadata": {
+    "description": "Flutter projeleri için kişisel Claude skill'leri: mimari, feature iskeleti, API/veri katmanı, Firebase ve test.",
+    "version": "1.2.0"
+  },
+  "plugins": [
+    {
+      "name": "flutter-kit",
+      "source": "./plugins/flutter-kit",
+      "description": "Feature-first + MVVM + Riverpod 3 mimarisiyle Flutter geliştirme skill'leri.",
+      "version": "1.2.0",
+      "category": "development",
+      "keywords": [
+        "flutter",
+        "dart",
+        "riverpod",
+        "go_router",
+        "dio",
+        "freezed",
+        "firebase"
+      ]
+    }
+  ]
+}
