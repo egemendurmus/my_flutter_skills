@@ -55,18 +55,19 @@ class OrdersViewModel extends _$OrdersViewModel {
     );
   }
 
+  /// Hata olursa liste ekranda kalır; AppException fırlatılır, UI SnackBar gösterir.
   Future<void> deleteOrder(String id) async {
-    final repo = ref.read(ordersRepositoryProvider);
-    state = await AsyncValue.guard(() async {
-      await repo.deleteOrder(id);
-      return repo.fetchOrders();
-    });
+    await ref.read(ordersRepositoryProvider).deleteOrder(id);
+    if (!ref.mounted) return;
+    final current = state.value ?? const <Order>[];
+    state = AsyncData(current.where((order) => order.id != id).toList());
   }
 }
 ```
 
 Kurallar:
 - `build()` içinde `ref.watch`, metodlarda `ref.read`.
+- Aksiyon (silme, güncelleme) başarısız olursa mevcut veriyi `AsyncError` ile ezme; hatayı fırlat, UI `try/catch` ile SnackBar göstersin.
 - `state = AsyncLoading()` sadece tam yeniden yüklemede; liste üzerinde küçük güncelleme yapılırken mevcut veriyi korumak için doğrudan `AsyncValue.guard` kullan.
 - Uzun `await` sonrası state yazmadan önce `if (!ref.mounted) return;`.
 

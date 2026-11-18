@@ -119,6 +119,9 @@ class App extends ConsumerWidget {
 ```dart
 // lib/core/router/routes.dart
 abstract final class Routes {
+  static const splash = '/splash';
+  static const login = '/login';
+  static const register = '/register';
   static const home = '/';
   static const orders = '/orders';
   static const orderDetail = 'detail/:id';        // /orders altında
@@ -185,7 +188,7 @@ Renkleri widget'larda sabit yazma; `Theme.of(context).colorScheme` kullan.
 
 ## 8. Ortak hata ve yükleme widget'ları
 
-`core/errors/app_exception.dart` için `flutter-api-data` skill'indeki tanımı kullan. `core/widgets/app_error_view.dart`, hatayı `AppException` ise `message` ile, değilse genel bir mesajla gösterir ve opsiyonel "Tekrar dene" butonu sunar.
+`core/errors/app_exception.dart` için `references/app-exception.md`'deki tanımı kullan. `core/widgets/app_error_view.dart`, hatayı `AppException` ise `message` ile, değilse genel bir mesajla gösterir ve opsiyonel "Tekrar dene" butonu sunar.
 
 ## 9. Çok dil (gerekiyorsa)
 
@@ -206,6 +209,10 @@ output-localization-file: app_localizations.dart
 ## 10b. Ortak widget'lar ve katalog
 
 `flutter-ui-components/references/core-widgets.md`'deki başlangıç setini (`AppLoadingView`, `AppEmptyView`, `AppErrorView`, `AppButton`) `core/widgets/` altına kur ve `core/widgets/CATALOG.md`'yi oluştur (`catalog-format.md`).
+
+## 10c. İnsanlar için dokümanlar
+
+`flutter-project-docs` skill'iyle `README.md`, `docs/MIMARI.md`, `docs/YENI_EKRAN.md`, `docs/KARARLAR.md` oluştur. Projeye sonradan gelen biri bunları okuyarak başlar.
 
 ## 11. Proje CLAUDE.md
 
@@ -229,6 +236,10 @@ Bu proje flutter-kit standartlarını kullanır (feature-first + MVVM + Riverpod
 - Çalıştır: flutter run --dart-define-from-file=env/dev.json
 - Codegen: dart run build_runner build -d
 - Kontrol: dart format . && flutter analyze && flutter test
+
+## İnsanlar için dokümanlar
+- docs/MIMARI.md, docs/YENI_EKRAN.md, docs/KARARLAR.md (varsa docs/GECIS.md)
+- Yapı, paket veya özellik değişince ilgili dokümanı aynı işte güncelle.
 
 ## Projeye özel notlar
 - Backend: <API adresi / Firebase projesi>

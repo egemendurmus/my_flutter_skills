@@ -27,6 +27,9 @@ class AuthRepository {
     try {
       return await call();
     } on FirebaseAuthException catch (e) {
+      if (e.code == 'network-request-failed') {
+        throw NetworkException(authErrorMessage(e.code), e);
+      }
       throw ValidationException(authErrorMessage(e.code));
     } on FirebaseException catch (e) {
       throw mapFirebaseException(e);

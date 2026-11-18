@@ -127,18 +127,31 @@ void main() {
     expect(sub.read(), isA<AsyncError<List<Order>>>());
   });
 
-  test('delete sonrası liste yenilenir', () async {
+  test('delete sonrası kayıt listeden çıkar', () async {
     when(() => repo.fetchOrders()).thenAnswer((_) async => [order]);
     when(() => repo.deleteOrder('1')).thenAnswer((_) async {});
 
     final sub = container.listen(ordersViewModelProvider, (_, _) {});
     await container.read(ordersViewModelProvider.future);
 
-    when(() => repo.fetchOrders()).thenAnswer((_) async => []);
     await container.read(ordersViewModelProvider.notifier).delete('1');
 
     expect(sub.read().value, isEmpty);
     verify(() => repo.deleteOrder('1')).called(1);
+  });
+
+  test('delete başarısız olursa liste korunur', () async {
+    when(() => repo.fetchOrders()).thenAnswer((_) async => [order]);
+    when(() => repo.deleteOrder('1')).thenThrow(const NetworkException());
+
+    final sub = container.listen(ordersViewModelProvider, (_, _) {});
+    await container.read(ordersViewModelProvider.future);
+
+    await expectLater(
+      container.read(ordersViewModelProvider.notifier).delete('1'),
+      throwsA(isA<NetworkException>()),
+    );
+    expect(sub.read().value, [order]);
   });
 }
 ```

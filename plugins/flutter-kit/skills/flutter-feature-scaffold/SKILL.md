@@ -45,6 +45,10 @@ flutter test test/features/<f>
 
 Hata kalırsa düzelt ve tekrar çalıştır. Analyzer temiz olmadan bitmiş sayma. Son olarak `flutter-clean-code` teslim kontrol listesinden geçir (boyut sınırları, `_buildX` yok, gömülü değer yok).
 
+## 3b. Doküman
+
+`docs/MIMARI.md` özellik tablosuna yeni satır ekle; yeni paket eklendiyse `docs/KARARLAR.md`'ye kayıt (`flutter-project-docs`). Proje taşınıyorsa `docs/GECIS.md`.
+
 ## 4. Kullanıcıya rapor
 
 Kısa bir özet ver:

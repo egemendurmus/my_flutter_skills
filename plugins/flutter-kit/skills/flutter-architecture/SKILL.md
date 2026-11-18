@@ -5,7 +5,13 @@ description: Flutter/Dart projelerinin mimari kuralları — feature-first klas�
 
 # Flutter Mimarisi
 
+Proje kökünde `docs/GECIS.md` varsa önce onu oku: `lib/core` ve `lib/features` dışındaki kod eski yapıdır, bu kurallar ona geçiş yapılana kadar zorla uygulanmaz.
+
 Bu skill, Flutter ekibinin resmi mimari rehberini (MVVM: UI katmanı = View + ViewModel, veri katmanı = Repository + Service) feature-first klasör yapısı ve Riverpod 3 ile uygular. Kod yazmadan önce bu kurallara uy; kullanıcı açıkça başka bir şey istemedikçe sapma.
+
+## Minimum sürümler
+
+Flutter **3.27+**, Dart **3.7+** (Column/Row `spacing:`, `(_, _)` wildcard parametreleri, Riverpod 3). Proje daha eskiyse bu özellikleri kullanma veya önce kullanıcıya SDK güncellemesini öner.
 
 ## Standart paketler
 
@@ -71,7 +77,7 @@ Screen/Widget → ViewModel → Repository → Service → (Dio / Firestore / SD
 
 ## Hata yönetimi
 
-- Repository'ler hata durumunda `core/errors/app_exception.dart` içindeki tipli `AppException` alt sınıflarını **fırlatır** (throw).
+- Repository'ler hata durumunda `core/errors/app_exception.dart` içindeki tipli `AppException` alt sınıflarını **fırlatır** (throw). Tanım: `references/app-exception.md`.
 - ViewModel'ler `AsyncValue.guard(...)` kullanır; hata `AsyncError` olarak UI'a gider.
 - UI, `AsyncValue`'yu `switch` ile tam olarak ele alır (data / error / loading). Kullanıcıya gösterilen mesaj `AppException.message`'dan gelir, ham `e.toString()` gösterilmez.
 
@@ -89,7 +95,8 @@ Desen örnekleri (provider, ViewModel, UI'da AsyncValue): `references/riverpod-p
 
 ## İş akışı
 
-- **Yeni proje:** `references/project-setup.md` adımlarını sırayla uygula.
+- **Yeni proje:** `references/project-setup.md` adımlarını sırayla uygula; dokümanlar için `flutter-project-docs`.
+- **Mevcut (flutter-kit yapısında olmayan) proje:** önce `flutter-migrate-existing` — doğrudan kural uygulamaya başlama.
 - **Yeni feature:** `flutter-feature-scaffold` skill'ini kullan.
 - **REST API / backend:** `flutter-api-data` skill'i.
 - **Firebase:** `flutter-firebase` skill'i.

@@ -50,7 +50,7 @@ Service'ler bu provider'ları `ref.watch` ile alır; testte bu sayede `fake_clou
 6. **Bileşik sorgular** index ister: hata mesajındaki linki kullanıcıya ver veya `firestore.indexes.json`'a ekle.
 7. **Birden çok yazma** atomik olmalıysa `WriteBatch`; okuyup-yazma ise `runTransaction`.
 8. **Güvenlik kuralları zorunlu:** Yeni koleksiyon eklediğinde `firestore.rules` için kural öner. İstemci tarafı kontrol güvenlik değildir.
-9. **Hata çevirme:** Repository'de `FirebaseException` → `AppException` (`mapFirebaseException`).
+9. **Hata çevirme:** Repository'de `FirebaseException` → `AppException` (`mapFirebaseException`). `AppException` tanımı: `flutter-architecture/references/app-exception.md`.
 10. **Sırlar:** `firebase_options.dart` gizli değildir (commit'lenebilir); asıl koruma güvenlik kurallarıdır. Servis hesabı anahtarları asla istemciye konmaz.
 
 ## Firestore hata çevirme

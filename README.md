@@ -9,6 +9,8 @@ Flutter projelerim için Claude skill'leri. Repo bir **Claude Code plugin market
 | `flutter-architecture` | Flutter kodu yazarken, proje kurarken, kod incelerken; klasör yapısı, katman kuralları, paket seçimi |
 | `flutter-clean-code` | Her kod yazımında ve refactor'da: dosya/widget/fonksiyon boyut sınırları, widget çıkarma, `build` içinde mantık yok, sabitler, isimlendirme, git alışkanlıkları |
 | `flutter-ui-components` | Tasarımdan (görsel/Figma) widget ağacı ve token çıkarma; mevcut kodda tekrar eden widget'ları script ile bulma; `core/widgets/CATALOG.md` bileşen kataloğu |
+| `flutter-project-docs` | Projeye sonradan gelen geliştirici için `README`, `docs/MIMARI.md`, `docs/YENI_EKRAN.md`, `docs/KARARLAR.md` üretir ve güncel tutar |
+| `flutter-migrate-existing` | Çalışan projeyi bozmadan yeni yapıya geçirir: önce analiz/rapor, sonra özellik özellik taşıma; `docs/GECIS.md` ile eski/yeni ayrımı |
 | `flutter-feature-scaffold` | "Yeni ekran / feature ekle" isteklerinde; model → service → repository → ViewModel → ekran → rota → test |
 | `flutter-api-data` | REST API'ye bağlanırken; Dio, token interceptor, hata çevirme, sayfalama, upload |
 | `flutter-firebase` | Firebase Auth / Firestore kullanırken; withConverter, stream, redirect, güvenlik kuralları |
@@ -71,7 +73,13 @@ Sağdaki Claude paneline normal yaz; ilgili skill kendiliğinden devreye girer. 
 - Belirli bir skill'i zorlamak için adını yaz: "flutter-clean-code kurallarına göre düzenle"
 - Claude her değişikliği önce fark (diff) olarak gösterir; sen onaylayınca yazar.
 
-**Mevcut projelerde:** önce yukarıdaki "analiz et, değiştirme" isteğiyle rapor al. Hepsini birden taşıma; yeni yazılan her şey yeni yapıyla, eski ekranlar el değdikçe.
+**Mevcut projelerde:** şunu yaz:
+
+> Bu projeyi flutter-kit yapısına geçirmek istiyorum. Önce analiz et ve plan çıkar, hiçbir dosyayı değiştirme.
+
+Claude rapor ve sıra önerir; onay verdikçe önce temel kurulumu, sonra özellikleri tek tek taşır. Geçiş boyunca `docs/GECIS.md` hangi kısmın eski hangisinin yeni olduğunu gösterir. Kural basit: `lib/core` ve `lib/features` dışındaki her şey eski yapıdır.
+
+**Projeye yeni gelen biri için:** projede `README.md` → `docs/MIMARI.md` → `docs/YENI_EKRAN.md` sırasıyla okunur (~30 dk). Bu dokümanlar `flutter-project-docs` skill'iyle oluşturulur ve her değişiklikte güncellenir. Eksikse: "Bu proje için yeni gelen geliştiriciye yönelik dokümanları oluştur".
 
 **Güncelleme:** skill'ler değişince terminalde `claude` → `/plugin marketplace update my-flutter-skills`.
 

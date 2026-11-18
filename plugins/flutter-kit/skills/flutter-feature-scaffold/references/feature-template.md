@@ -134,12 +134,24 @@ class OrdersViewModel extends _$OrdersViewModel {
     );
   }
 
+  /// Hata olursa liste ekranda kalır; AppException fırlatılır, UI SnackBar gösterir.
   Future<void> delete(String id) async {
-    final repo = ref.read(ordersRepositoryProvider);
-    state = await AsyncValue.guard(() async {
-      await repo.deleteOrder(id);
-      return repo.fetchOrders();
-    });
+    await ref.read(ordersRepositoryProvider).deleteOrder(id);
+    if (!ref.mounted) return;
+    final current = state.value ?? const <Order>[];
+    state = AsyncData(current.where((order) => order.id != id).toList());
+  }
+}
+```
+
+UI'da silme çağrısı:
+
+```dart
+Future<void> _onDelete(BuildContext context, WidgetRef ref, String id) async {
+  try {
+    await ref.read(ordersViewModelProvider.notifier).delete(id);
+  } on AppException catch (e) {
+    if (context.mounted) context.showSnack(e.message);
   }
 }
 ```
