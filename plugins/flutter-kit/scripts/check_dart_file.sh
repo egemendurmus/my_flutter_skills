@@ -22,14 +22,15 @@ case "$file" in
 esac
 [ -f "$file" ] || exit 0
 
-# Taşınma sürüyorsa eski yapıdaki dosyalara kural dayatma
+# Kurallar sadece yeni yapıdaki dosyalara uygulanır. lib/core ve lib/features dışı
+# eski yapıdır (taşınmamış proje veya geçiş süren proje): orada küçük düzeltme
+# yapılırken refactor dayatılmaz.
 rel="${file#"$project_dir"/}"
-if [ -f "$project_dir/docs/GECIS.md" ]; then
-  case "$rel" in
-    lib/core/*|lib/features/*|lib/main.dart|lib/app.dart) ;;
-    *) exit 0 ;;
-  esac
-fi
+case "$rel" in
+  lib/core/*|lib/features/*) ;;
+  lib/main.dart|lib/app.dart) [ -d "$project_dir/lib/core" ] || exit 0 ;;
+  *) exit 0 ;;
+esac
 
 command -v dart >/dev/null 2>&1 && dart format "$file" >/dev/null 2>&1
 

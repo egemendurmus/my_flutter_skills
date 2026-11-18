@@ -1,7 +1,7 @@
 {
   "name": "flutter-kit",
   "description": "Feature-first + MVVM + Riverpod 3 mimarisiyle Flutter geliştirme skill'leri: mimari kurallar, yeni feature iskeleti, Dio/REST veri katmanı, Firebase/Firestore ve test.",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "author": {
     "name": "egemendurmus"
   },

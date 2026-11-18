@@ -52,7 +52,7 @@ Plugin kurulduktan sonra bunlar kendiliğinden çalışır, bir şey yazman gere
   - `core/` klasörünün bir feature'ı import etmesi
   - legacy Riverpod (`StateProvider` vb.), `abstract`/`sealed` olmayan freezed sınıfı
 
-  Proje taşınma aşamasındaysa (`docs/GECIS.md` varsa), eski yapıdaki dosyalar kontrol edilmez.
+  Sadece yeni yapıdaki dosyalar (`lib/core/`, `lib/features/`) kontrol edilir. Henüz taşınmamış bir projede veya eski yapıdaki bir dosyada küçük bir düzeltme yapılırken refactor dayatılmaz.
 
 ## Skill'ler
 

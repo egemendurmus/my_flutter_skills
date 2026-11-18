@@ -14,7 +14,7 @@ Kapsam: $ARGUMENTS — boşsa `git status` ve `git diff` (son commit'e göre) il
 
 1. **Mimari** — `flutter-architecture` kontrol listesi: katman ihlalleri, `core → features` importu, legacy Riverpod, freezed `abstract/sealed`.
 2. **Temiz kod** — `flutter-clean-code` teslim kontrol listesi: boyut sınırları, `_buildX`, `build` içinde mantık, gömülü değerler, `!`, boş `catch`, isimlendirme.
-3. **Tekrar** — `python3 <flutter-ui-components dizini>/scripts/find_widget_duplicates.py lib/`
+3. **Tekrar** — `flutter-ui-components` skill'ini yükle; onun dizinindeki `scripts/find_widget_duplicates.py lib/` script'ini çalıştır (Python 3).
 4. **Test** — değişen repository/ViewModel'lerin testi var mı; çalıştırılabiliyorsa `flutter test`.
 5. **Analiz** — çalıştırılabiliyorsa `flutter analyze`.
 6. **Doküman** — yeni özellik `docs/MIMARI.md`'de var mı, yeni paket `docs/KARARLAR.md`'de var mı.
