@@ -27,14 +27,57 @@ Screen → ViewModel → Repository → Service → Dio / Firestore
 
 ## Kurulum
 
-### Claude Code (önerilen)
+### VS Code'da adım adım (önerilen)
+
+**1. Claude Code eklentisini kur (bir kere)**
+`Ctrl+Shift+X` → "Claude Code" ara → yayıncısı **Anthropic** olanı kur → Claude hesabınla giriş yap. VS Code 1.98+ ve Claude Pro/Max/Team/Enterprise hesabı gerekir.
+
+**2. Flutter projesini aç**
+`File → Open Folder` ile proje klasörünü aç. Bir dosya açınca sağ üstte Claude simgesi (✱) çıkar; tıklayınca sohbet paneli açılır.
+
+**3. Plugin'i kur (bir kere)**
+VS Code terminalini aç (`Ctrl+ö` veya `View → Terminal`) ve:
 
 ```
+claude
 /plugin marketplace add egemendurmus/my_flutter_skills
 /plugin install flutter-kit@serdar-flutter-skills
+/exit
 ```
 
-Güncelleme: repoya push ettikten sonra `/plugin marketplace update serdar-flutter-skills`.
+- Kapsam (scope) sorarsa **User** seç: plugin bütün projelerde geçerli olur.
+- Repo private ise önce terminalde `gh auth login` ile GitHub'a giriş yap.
+- Plugin hem terminalde hem VS Code panelinde çalışır; emin olmak için VS Code'u bir kez yeniden başlat.
+
+**4. Kullan**
+Sağdaki Claude paneline normal yaz; ilgili skill kendiliğinden devreye girer. İlk denemeler:
+
+> Bu projeyi flutter-kit kurallarına göre analiz et. Neler uyumsuz, raporla ama hiçbir dosyayı değiştirme.
+
+> Ayarlar ekranı ekle: tema seçimi (açık/koyu) ve çıkış butonu olsun.
+
+| Ne yapmak istiyorsun | Örnek istek |
+|---|---|
+| Yeni proje | "stok_takip adında yeni bir Flutter projesi kur, Android ve iOS" |
+| Yeni ekran | "Sipariş listesi ve detay ekranı ekle, veri /api/orders'dan geliyor" |
+| Firebase | "Kullanıcının değerlendirmelerini Firestore'dan canlı listeleyen ekran yap" |
+| Tasarımdan kod | Ekran görüntüsünü panele sürükle: "Bu tasarımı koda dök" |
+| Tekrar analizi | "Projede tekrar eden widget'ları bul, ortak bileşen öner" |
+| Temizlik | "order_detail_screen.dart spagetti olmuş, temizle" |
+| İnceleme | "Son değişiklikleri mimari kurallara göre incele" |
+
+İpuçları:
+- `@` yazıp dosya seçersen Claude o dosyaya odaklanır: `@lib/features/orders/ui/screens/orders_screen.dart bunu temizle`
+- Belirli bir skill'i zorlamak için adını yaz: "flutter-clean-code kurallarına göre düzenle"
+- Claude her değişikliği önce fark (diff) olarak gösterir; sen onaylayınca yazar.
+
+**Mevcut projelerde:** önce yukarıdaki "analiz et, değiştirme" isteğiyle rapor al. Hepsini birden taşıma; yeni yazılan her şey yeni yapıyla, eski ekranlar el değdikçe.
+
+**Güncelleme:** skill'ler değişince terminalde `claude` → `/plugin marketplace update serdar-flutter-skills`.
+
+### Terminal (Claude Code CLI)
+
+Proje klasöründe `claude` çalıştırıp yukarıdaki `/plugin` komutlarını yaz; kullanım aynı.
 
 ### Elle (plugin olmadan)
 
