@@ -1,6 +1,6 @@
 ---
 name: flutter-project-docs
-description: Flutter projesine yeni katılan bir geliştiricinin projeyi hızla anlaması için insan okuyacak dokümanları oluşturur ve güncel tutar — proje README'si, docs/MIMARI.md, docs/YENI_EKRAN.md, docs/KARARLAR.md. Yeni proje kurulurken, mevcut projeye flutter-kit uygulanırken, feature eklendikten veya yapı değiştikten sonra ve "dokümantasyon yaz/güncelle", "yeni gelen nasıl anlar" isteklerinde kullan.
+description: "Projeye yeni gelen geliştirici için README, docs/MIMARI.md, YENI_EKRAN.md, KARARLAR.md oluşturur ve güncel tutar. Proje kurulurken, yapı değişince ve doküman isteklerinde kullan."
 ---
 
 # Proje Dokümantasyonu (insanlar için)

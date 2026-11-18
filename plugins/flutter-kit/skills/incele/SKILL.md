@@ -1,6 +1,6 @@
 ---
 name: incele
-description: Flutter kodunu flutter-kit kurallarına göre inceler ve rapor verir — mimari katmanlar, temiz kod, tekrar eden widget'lar, testler, dokümanlar. Kod değiştirmez; düzeltmeyi kullanıcı onaylarsa yapar. "İncele", "review", "kurallara uyuyor mu", "kontrol et" isteklerinde ve /flutter-kit:incele komutuyla kullan.
+description: "Flutter kodunu flutter-kit kurallarına göre inceler, değiştirmeden rapor verir, onayla düzeltir. \"İncele\", \"review\", \"kontrol et\" isteklerinde ve /flutter-kit:incele ile kullan."
 argument-hint: "[dosya, klasör veya boş = son değişiklikler]"
 ---
 
@@ -18,8 +18,8 @@ Kapsam: $ARGUMENTS — boşsa `git status` ve `git diff` (son commit'e göre) il
      | while read -r f; do bash "<incele dizini>/../../scripts/check_dart_file.sh" "$f" "$PWD"; done
    ```
    Yanlış yerdeki dosyalar (ör. `features/product/product_controller.dart`), `controller`/`page` adları ve diğer ihlaller burada çıkar.
-1. **Mimari** — `flutter-architecture` kontrol listesi: katman ihlalleri, `core → features` importu, legacy Riverpod, freezed `abstract/sealed`.
-2. **Temiz kod** — `flutter-clean-code` teslim kontrol listesi: boyut sınırları, `_buildX`, `build` içinde mantık, gömülü değerler, `!`, boş `catch`, isimlendirme.
+1. **Mimari** — `flutter-architecture` kuralları: katman ihlalleri, `core → features` importu, legacy Riverpod, freezed `abstract/sealed`.
+2. **Temiz kod** — `flutter-clean-code` kuralları: boyut sınırları, `_buildX`, `build` içinde mantık, gömülü değerler, `!`, boş `catch`, isimlendirme.
 3. **Tekrar** — `flutter-ui-components` skill'ini yükle; onun dizinindeki `scripts/find_widget_duplicates.py lib/` script'ini çalıştır (Python 3).
 4. **Test** — değişen repository/ViewModel'lerin testi var mı; çalıştırılabiliyorsa `flutter test`.
 5. **Analiz** — çalıştırılabiliyorsa `flutter analyze`.

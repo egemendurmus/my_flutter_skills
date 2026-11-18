@@ -1,6 +1,6 @@
 ---
 name: flutter-migrate-existing
-description: Mevcut, çalışan bir Flutter projesine flutter-kit yapısını bozmadan, adım adım uygular — önce analiz ve rapor (kod değiştirmeden), sonra temel kurulum, sonra ekran ekran taşıma; hangi kısmın eski hangisinin yeni olduğunu docs/GECIS.md'de tutar. "Bu projeyi yeni yapıya geçir", "mevcut projeye uygula", "refactor et", "eski kodu düzenle" isteklerinde ve flutter-kit yapısında olmayan bir projede ilk kez çalışırken kullan.
+description: "Çalışan bir Flutter projesini bozmadan flutter-kit yapısına taşır: önce analiz ve plan, sonra özellik özellik taşıma, eski/yeni ayrımı docs/GECIS.md'de. Mevcut projeyi düzenleme/refactor isteklerinde kullan."
 ---
 
 # Mevcut Projeye Uygulama
@@ -40,6 +40,7 @@ Mevcut kodu değiştirmeden eklenir:
 - Paketler (`flutter-architecture/references/project-setup.md` §2) — mevcut paketlerle sürüm çakışması varsa raporla.
 - `ProviderScope` ile `runApp` sarılır (mevcut Provider/Bloc ile yan yana çalışır).
 - `lib/core/`: `errors/app_exception.dart`, `network/` (Dio) veya `firebase/` provider'ları, `theme/` (mevcut renklerden türet — görünüm değişmesin), `constants/`, `extensions/`, `widgets/` + `CATALOG.md`.
+- `.claude/settings.json` ile `build/`, `.dart_tool/`, `ios/Pods/` ve üretilmiş dosyaları okuma dışı bırak (`flutter-architecture/references/project-setup.md` §10d) — mevcut ayar varsa birleştir.
 - **Lint:** mevcut `analysis_options.yaml`'ı koru. `very_good_analysis`'e geçiş, kodun çoğu taşındıktan sonra ayrı bir adım (yoksa binlerce uyarı gerçek sorunları gizler).
 - **Navigasyon:** mevcut yöntem korunur; yeni ekranlar mevcut yönteme kaydedilir. go_router'a geçiş, özelliklerin çoğu taşındıktan sonra tek, ayrı bir adım.
 - Dokümanlar: `docs/GECIS.md` (yeni), `docs/MIMARI.md` (hedef yapı + "geçiş sürüyor, bkz. GECIS.md" notu), `docs/KARARLAR.md`, `CLAUDE.md` — `flutter-project-docs`.

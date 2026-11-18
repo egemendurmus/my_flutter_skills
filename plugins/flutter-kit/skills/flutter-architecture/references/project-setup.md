@@ -216,6 +216,27 @@ output-localization-file: app_localizations.dart
 
 `flutter-project-docs` skill'iyle `README.md`, `docs/MIMARI.md`, `docs/YENI_EKRAN.md`, `docs/KARARLAR.md` oluştur. Projeye sonradan gelen biri bunları okuyarak başlar.
 
+## 10d. Claude'un okumaması gereken dosyalar (token tasarrufu)
+
+Proje kökünde `.claude/settings.json` (projeyle commit'lenir):
+
+```json
+{
+  "permissions": {
+    "deny": [
+      "Read(./build/**)",
+      "Read(./.dart_tool/**)",
+      "Read(./ios/Pods/**)",
+      "Read(./android/.gradle/**)",
+      "Read(./**/*.g.dart)",
+      "Read(./**/*.freezed.dart)"
+    ]
+  }
+}
+```
+
+Üretilmiş dosyalar (`*.g.dart`, `*.freezed.dart`) büyük ve tahmin edilebilir: provider adı her zaman `<sınıf/fonksiyon adı camelCase>Provider`. Codegen sorunu varsa dosyayı okumak yerine `dart run build_runner build -d` çıktısına bak. Dosya zaten varsa `permissions.deny` listesine ekle, mevcut ayarları silme.
+
 ## 11. Proje CLAUDE.md
 
 Proje kökünde `CLAUDE.md` oluştur; plugin kurulu olmayan bir ortamda bile kurallar görünür olsun:

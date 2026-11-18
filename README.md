@@ -108,6 +108,20 @@ Claude bir rapor ve taşıma sırası önerir. Sen onay verdikçe önce temel ku
 
 Projede şu sırayla okunur (yaklaşık 30 dk): `README.md` → `docs/MIMARI.md` → `docs/YENI_EKRAN.md` → `docs/KARARLAR.md`. Bu dosyalar `flutter-project-docs` ile oluşturulur ve her değişiklikte güncellenir.
 
+## Token tasarrufu
+
+Plugin kendi tarafında şunları yapar:
+- **Yeni özellik iskeleti script'le üretilir** (`scripts/new_feature.sh`): model, service, repository, ViewModel, ekran, widget ve 2 test dosyası tek komutla oluşur. Claude sadece alanları ve iş mantığını doldurur.
+- **Gereksiz dosyalar okunmaz:** her projeye `.claude/settings.json` eklenir; `build/`, `.dart_tool/`, `ios/Pods/` ve üretilmiş `*.g.dart` / `*.freezed.dart` dosyaları Claude'a kapalıdır.
+- **Skill'ler kısa tutulur:** kurallar kısa liste halinde, ayrıntılar sadece gerektiğinde okunan `references/` dosyalarında.
+
+Senin yapabileceklerin:
+- Konu değişince `/clear` yaz; biten işin konuşması token yemeye devam eder.
+- Dosyayı `@` ile göster (`@lib/features/products/...`); Claude aramak için token harcamaz.
+- Rutin işlerde `/model` ile Sonnet'i seç; mimari karar ve taşıma planında Opus.
+- Uzun `flutter analyze` / log çıktısının tamamını yapıştırma; sadece hata satırlarını ver ya da Claude'a kendisi çalıştırmasını söyle.
+- Tüm testleri değil ilgili klasörü çalıştır: `flutter test test/features/products`.
+
 ## VS Code'da kurulum
 
 1. **Claude Code eklentisi (bir kere):** Eklentiler bölümünü aç (Mac: `Cmd+Shift+X`, Windows: `Ctrl+Shift+X`), "Claude Code" diye ara ve yayıncısı **Anthropic** olanı kur. Ardından Claude hesabınla giriş yap. VS Code 1.98+ ve Claude Pro, Max, Team ya da Enterprise hesabı gerekir.
@@ -157,7 +171,8 @@ plugins/flutter-kit/
 ├── hooks/hooks.json                otomatik korumalar
 ├── scripts/                        hook script'leri
 │   ├── prompt_context.sh           her istekte hatırlatma
-│   └── check_dart_file.sh          .dart dosyası kontrolü
+│   ├── check_dart_file.sh          .dart dosyası kontrolü (elle: tüm proje taraması)
+│   └── new_feature.sh              yeni özellik iskeleti (8 dosya)
 └── skills/<skill>/
     ├── SKILL.md                    kurallar ve adımlar
     ├── references/                 kod şablonları, örnekler

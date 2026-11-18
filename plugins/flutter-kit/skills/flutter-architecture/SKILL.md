@@ -1,123 +1,47 @@
 ---
 name: flutter-architecture
-description: Flutter/Dart ve mobil uygulama projelerinin mimari kuralları (kullanıcı Flutter demese de mobil uygulama/app isteniyorsa) — feature-first klasör yapısı, MVVM (View + Riverpod ViewModel), Repository/Service katmanları, paket seçimi ve proje kurulumu. Flutter kodu yazarken, yeni Flutter projesi kurarken, mevcut kodu incelerken veya "bu dosya nereye gider / hangi paketi kullanayım" sorularında kullan.
+description: "Flutter ve mobil uygulama projelerinin mimari kuralları (kullanıcı Flutter demese de): feature-first klasörler, MVVM + Riverpod 3, Repository/Service katmanları, paketler. Her Flutter kod işinde kullan."
 ---
 
 # Flutter Mimarisi
 
-Proje kökünde `docs/GECIS.md` varsa önce onu oku: `lib/core` ve `lib/features` dışındaki kod eski yapıdır, bu kurallar ona geçiş yapılana kadar zorla uygulanmaz.
+Flutter'ın resmi MVVM rehberi + feature-first + Riverpod 3. Kullanıcı açıkça istemedikçe sapma. `docs/GECIS.md` varsa önce onu oku: `lib/core` ve `lib/features` dışı eski yapıdır, ona bu kurallar dayatılmaz.
 
-Bu skill, Flutter ekibinin resmi mimari rehberini (MVVM: UI katmanı = View + ViewModel, veri katmanı = Repository + Service) feature-first klasör yapısı ve Riverpod 3 ile uygular. Kod yazmadan önce bu kurallara uy; kullanıcı açıkça başka bir şey istemedikçe sapma.
+**Minimum:** Flutter 3.27+, Dart 3.7+. **Paketler:** flutter_riverpod + riverpod_annotation (+ riverpod_generator), go_router, dio, freezed + json_serializable, very_good_analysis, mocktail; depolama: shared_preferences, sırlar için flutter_secure_storage. Versiyon yazmadan `flutter pub add`. Listede olmayan paketi eklemeden sor. **Kullanma:** GetX, get_it, http, yeni kodda provider/ChangeNotifier, Riverpod legacy (StateProvider, StateNotifier).
 
-## Minimum sürümler
-
-Flutter **3.27+**, Dart **3.7+** (Column/Row `spacing:`, `(_, _)` wildcard parametreleri, Riverpod 3). Proje daha eskiyse bu özellikleri kullanma veya önce kullanıcıya SDK güncellemesini öner.
-
-## Standart paketler
-
-| İhtiyaç | Paket | Not |
-|---|---|---|
-| State / DI | `flutter_riverpod`, `riverpod_annotation` + dev: `riverpod_generator` | Her zaman codegen (`@riverpod`) kullan |
-| Routing | `go_router` | Rotalar `core/router/` altında |
-| HTTP | `dio` | Sadece Service sınıflarında kullanılır |
-| Model | `freezed_annotation`, `json_annotation` + dev: `freezed`, `json_serializable` | Freezed 3: `abstract class` / `sealed class` zorunlu |
-| Codegen | dev: `build_runner` | `dart run build_runner build -d` |
-| Lint | dev: `very_good_analysis` | |
-| Test | `flutter_test` + dev: `mocktail` | |
-| Lokal depolama | `shared_preferences`; token/şifre için `flutter_secure_storage` | |
-
-Paketleri **versiyon yazmadan** `flutter pub add` ile ekle; böylece güncel uyumlu sürüm gelir. Listede olmayan bir paket eklemeden önce kullanıcıya sor. Kurulum adımları: `references/project-setup.md`.
-
-Kullanılmayacaklar (kullanıcı istemedikçe): `GetX`, `provider` + `ChangeNotifier` yeni kodda, `StateNotifier`/`StateProvider` (Riverpod legacy), `http` paketi (Dio varken), `get_it`.
-
-## Klasör yapısı (özet)
+## Klasörler
 
 ```
 lib/
-├── main.dart              # bootstrap: ProviderScope + runApp
-├── app.dart               # MaterialApp.router, tema
-├── core/                  # feature'lara bağımlı OLMAYAN ortak kod
-│   ├── config/            # env (dart-define)
-│   ├── constants/         # spacing, radius, süre, asset yolları
-│   ├── errors/            # AppException hiyerarşisi
-│   ├── extensions/        # BuildContext, tarih/para formatlama
-│   ├── network/           # Dio provider, interceptor'lar
-│   ├── router/            # go_router
-│   ├── theme/
-│   └── widgets/           # birden çok feature'da kullanılan widget'lar
-└── features/
-    └── <feature>/
-        ├── data/
-        │   ├── models/        # freezed modeller
-        │   ├── services/      # dış dünya: API / Firestore / lokal DB
-        │   └── repositories/  # tek doğruluk kaynağı, hata çevirme
-        └── ui/
-            ├── view_models/   # @riverpod Notifier / AsyncNotifier
-            ├── screens/       # route'a bağlı sayfalar
-            └── widgets/       # feature'a özel widget'lar
-test/                      # lib/ ile aynı yapı
+├── main.dart, app.dart
+├── core/      config · constants · errors · extensions · firebase · models · network · router · theme · utils · widgets
+└── features/<özellik>/
+    ├── data/  models/ · services/ · repositories/
+    └── ui/    view_models/ · screens/ · widgets/
+test/          lib/ ile aynı yapı
 ```
 
-**Kesin kurallar (otomatik kontrol edilir):**
-- Bir feature klasöründe dosya **sadece** şu klasörlerde durur: `data/models`, `data/services`, `data/repositories`, `ui/view_models`, `ui/screens`, `ui/widgets` (gerekirse `domain/use_cases`). Feature kökünde veya `ui/` kökünde açıkta dosya olmaz.
-- İsimler tek tip: `*_view_model.dart` / `XViewModel` (**`controller`, `notifier` kullanılmaz**), `*_screen.dart` / `XScreen` (`page`, `view` kullanılmaz), `*_service.dart`, `*_repository.dart`. ViewModel'in state sınıfı ayrı dosyadaysa `ui/view_models/*_state.dart`.
-- `core/` altında sadece: `config, constants, errors, extensions, firebase, models, network, router, theme, utils, widgets`.
+Kesin (otomatik kontrol edilir): feature içinde dosya sadece bu 6 klasörde durur (gerekirse `domain/use_cases`), açıkta dosya yok. İsimler: `*_view_model.dart`/`XViewModel` (controller/notifier değil), `*_screen.dart`/`XScreen` (page/view değil), `*_service.dart`, `*_repository.dart`. Ayrıntı: `references/folder-structure.md`.
 
-Ayrıntılar ve isimlendirme: `references/folder-structure.md`.
-
-## Bağımlılık kuralları (en önemli kısım)
-
-Ok yönünde bağımlılık serbest, tersi **yasak**:
+## Katmanlar
 
 ```
-Screen/Widget → ViewModel → Repository → Service → (Dio / Firestore / SDK)
+Screen/Widget → ViewModel → Repository → Service → Dio / Firestore
 ```
 
-1. **Widget'lar veri çekmez.** `Dio`, `FirebaseFirestore`, repository ya da service'i widget içinde asla çağırma. Widget sadece `ref.watch(xViewModelProvider)` yapar ve ViewModel metodlarını çağırır.
-2. **ViewModel** sadece repository'leri bilir; Service'i, Dio'yu, `BuildContext`'i bilmez. Navigasyon ve SnackBar UI'da yapılır.
-3. **Repository** bir veya birden çok service'i kullanır, DTO → model dönüşümünü ve hata çevirmeyi (`DioException`/`FirebaseException` → `AppException`) yapar. Repository'ler birbirini çağırmaz; iki repository birleşecekse bunu ViewModel ya da (gerekirse) bir use-case yapar.
-4. **Service** durumsuzdur, tek bir veri kaynağını sarar, ham veri (DTO/JSON) döner, hata çevirmez.
-5. `core/` hiçbir `features/` klasörünü import etmez. Feature'lar birbirinin `ui/` klasörünü import etmez; paylaşılan şey `core/`'a taşınır.
-6. Domain/use-case katmanı **opsiyoneldir**: sadece birden çok repository'yi birleştiren veya ViewModel'ler arasında tekrar eden iş mantığı varsa `features/<x>/domain/use_cases/` aç. Varsayılan olarak açma.
+1. Widget veri çekmez; sadece `ref.watch(xViewModelProvider)` ve ViewModel metotları.
+2. ViewModel sadece repository bilir; `BuildContext`, navigasyon, Service, Dio yok.
+3. Repository: service'leri kullanır, DTO → model, hatayı `AppException`'a çevirir (`references/app-exception.md`). Repository'ler birbirini çağırmaz.
+4. Service: durumsuz, tek kaynak, ham veri döner, hata çevirmez.
+5. `core/` → `features/` importu yok; feature'lar birbirinin `ui/`'ını import etmez.
 
-## Hata yönetimi
+## Kod
 
-- Repository'ler hata durumunda `core/errors/app_exception.dart` içindeki tipli `AppException` alt sınıflarını **fırlatır** (throw). Tanım: `references/app-exception.md`.
-- ViewModel'ler `AsyncValue.guard(...)` kullanır; hata `AsyncError` olarak UI'a gider.
-- UI, `AsyncValue`'yu `switch` ile tam olarak ele alır (data / error / loading). Kullanıcıya gösterilen mesaj `AppException.message`'dan gelir, ham `e.toString()` gösterilmez.
+- Model: freezed (`abstract`/`sealed` class). Provider: `@riverpod` codegen, fonksiyonda `Ref ref`; uygulama ömürlü olanlar `keepAlive: true`.
+- ViewModel `AsyncValue.guard`; UI `AsyncValue`'yu `switch` ile tam ele alır; mesaj `AppException.message`'dan. Async sonrası `if (!ref.mounted) return;`.
+- `.g.dart`/`.freezed.dart` elle düzenlenmez; değişiklikten sonra `dart run build_runner build -d` ve `flutter analyze`.
+- Desenler: `references/riverpod-patterns.md`. Temiz kod sınırları: `flutter-clean-code`.
 
-## Kod stili
+## Hangi iş, hangi skill
 
-- Modeller `freezed` ile, immutable. JSON gerekiyorsa `fromJson`.
-- Provider'lar codegen ile: fonksiyonel provider'da parametre tipi `Ref ref`.
-- Provider'lar varsayılan olarak autoDispose'dur; uygulama ömrü boyunca yaşaması gerekenler (Dio, auth, router) `@Riverpod(keepAlive: true)`.
-- `async` işlemden sonra state yazmadan önce `if (!ref.mounted) return;`.
-- `print` yerine `debugPrint` veya `dart:developer` `log`.
-- Sabit metinleri doğrudan widget'a gömme; uygulama çok dilli olacaksa `gen-l10n` (bkz. project-setup).
-- `.g.dart` ve `.freezed.dart` dosyalarını elle düzenleme; değişiklikten sonra build_runner çalıştır.
-
-Desen örnekleri (provider, ViewModel, UI'da AsyncValue): `references/riverpod-patterns.md`.
-
-## İş akışı
-
-- **Yeni proje:** `references/project-setup.md` adımlarını sırayla uygula; dokümanlar için `flutter-project-docs`.
-- **Mevcut (flutter-kit yapısında olmayan) proje:** önce `flutter-migrate-existing` — doğrudan kural uygulamaya başlama.
-- **Yeni feature:** `flutter-feature-scaffold` skill'ini kullan.
-- **REST API / backend:** `flutter-api-data` skill'i.
-- **Firebase:** `flutter-firebase` skill'i.
-- **Test:** `flutter-testing` skill'i.
-- **Tasarımdan ekran / ortak widget'lar / tekrar analizi:** `flutter-ui-components` skill'i.
-- **Kod seviyesi temizlik** (boyut sınırları, widget çıkarma, sabitler, isimlendirme): `flutter-clean-code` skill'i — her kod yazımında geçerlidir.
-- Kod ürettikten sonra: `dart run build_runner build -d`, ardından `flutter analyze`. Analyzer uyarısı bırakma.
-
-## Kod inceleme kontrol listesi
-
-Mevcut kodu incelerken şunlara bak ve ihlalleri dosya:satır ile raporla:
-- [ ] Widget içinde Dio/Firestore/repository çağrısı var mı?
-- [ ] ViewModel'de `BuildContext`, navigasyon veya Service kullanımı var mı?
-- [ ] Hata yakalanmadan UI'a ham exception mı gidiyor?
-- [ ] `AsyncValue`'nun loading/error durumu ele alınmış mı?
-- [ ] Legacy Riverpod (`StateNotifierProvider`, `StateProvider`, `ChangeNotifierProvider`) var mı?
-- [ ] Freezed sınıfları `abstract`/`sealed` mi?
-- [ ] `core/` → `features/` importu var mı?
-- [ ] Gizli bilgi (API key, şifre) koda gömülmüş mü?
+Yeni proje → `yeni-proje` (adımlar: `references/project-setup.md`) · Mevcut proje → `flutter-migrate-existing` · Yeni özellik → `flutter-feature-scaffold` · REST → `flutter-api-data` · Firebase → `flutter-firebase` · Tasarım/ortak widget → `flutter-ui-components` · Test → `flutter-testing` · Dokümanlar → `flutter-project-docs` · İnceleme → `incele`

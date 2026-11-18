@@ -1,6 +1,6 @@
 ---
 name: flutter-api-data
-description: Flutter'da REST API / backend veri katmanı — Dio kurulumu, interceptor'lar (token, log, refresh), hata çevirme (AppException), Service/Repository desenleri, sayfalama, dosya yükleme. Flutter uygulaması bir backend'e (ASP.NET, Node, SQL Server arkasındaki API vb.) bağlanırken veya HTTP hatalarını ele alırken kullan.
+description: "Flutter REST API veri katmanı: Dio, token yenileme, AppException'a hata çevirme, sayfalama, dosya yükleme. Backend'e (ASP.NET, Node, SQL Server arkasındaki API) bağlanırken kullan."
 ---
 
 # REST API Veri Katmanı

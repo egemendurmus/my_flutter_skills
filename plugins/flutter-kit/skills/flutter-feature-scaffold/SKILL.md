@@ -1,65 +1,50 @@
 ---
 name: flutter-feature-scaffold
-description: Flutter projesine yeni bir feature/ekran/modül ekler — model, service, repository, ViewModel, ekran, rota ve testleri doğru sırayla oluşturur. "Yeni ekran ekle", "X feature'ını oluştur", "sipariş listesi sayfası yap", "CRUD ekranı" gibi isteklerde kullan.
+description: "Flutter projesine yeni özellik/ekran ekler. İskeleti script ile üretir (model, service, repository, ViewModel, ekran, widget, testler), sonra alanları ve iş mantığını doldurur. \"Yeni ekran ekle\", \"X özelliğini oluştur\", \"liste sayfası yap\" isteklerinde kullan."
 ---
 
-# Yeni Feature Oluşturma
+# Yeni Özellik
 
-Bu skill `flutter-architecture` kurallarına dayanır; o kurallar geçerlidir. Kod şablonları: `references/feature-template.md`.
+`flutter-architecture` kuralları geçerli.
 
-## 0. Önce netleştir (eksikse kısaca sor)
+## 1. Netleştir (eksikse kısaca sor)
 
-- Feature adı (tekil iş alanı, `snake_case`): ör. `orders`
-- Veri kaynağı: REST API mi (`flutter-api-data`), Firestore mu (`flutter-firebase`), lokal mi?
-- Ekranlar: liste? detay? form (oluştur/düzenle)?
-- Modelin alanları. Kullanıcı örnek JSON verebiliyorsa iste — alanları ondan çıkar.
+Özellik adı (`snake_case`, çoğul: `products`), veri kaynağı (REST / Firebase), ekranlar (liste, detay, form), model alanları (örnek JSON varsa iste). Ayrıntı yoksa makul varsay, sonunda listele.
 
-Kullanıcı ayrıntı vermediyse makul varsayımla devam et ve varsayımları sonunda listele.
+## 2. İskeleti script ile üret — dosyaları elle yazma
 
-## 1. Mevcut projeyi oku
-
-- `pubspec.yaml`: gerekli paketler var mı? Yoksa `flutter-architecture/references/project-setup.md`'deki komutlarla ekle.
-- `lib/core/`: `AppException`, Dio provider, router, ortak widget'lar mevcut mu? Mevcut olanı kullan, kopyasını üretme.
-- Benzer bir feature varsa onun stilini takip et.
-
-## 2. Dosyaları bu sırayla oluştur
-
-İçten dışa doğru, her katman bir öncekine dayanır:
-
-1. `features/<f>/data/models/<model>.dart` — freezed model
-2. `features/<f>/data/services/<f>_service.dart` — ham veri erişimi + provider
-3. `features/<f>/data/repositories/<f>_repository.dart` — hata çevirme + provider
-4. `features/<f>/ui/view_models/<ekran>_view_model.dart` — `@riverpod` AsyncNotifier/Notifier
-5. `features/<f>/ui/widgets/...` — gerekiyorsa feature'a özel widget'lar
-6. `features/<f>/ui/screens/<ekran>_screen.dart` — `ConsumerWidget`
-7. `core/router/routes.dart` + `app_router.dart` — rota ekle
-8. `test/features/<f>/...` — en az repository ve ViewModel testi (`flutter-testing`)
-
-## 3. Codegen ve kontrol
+Plugin kökü bu skill dizininin iki üstüdür:
 
 ```bash
-dart run build_runner build -d
-flutter analyze
-flutter test test/features/<f>
+bash "<bu skill dizini>/../../scripts/new_feature.sh" <feature> [--model <tekil_ad>] [--source rest|firebase]
 ```
 
-Hata kalırsa düzelt ve tekrar çalıştır. Analyzer temiz olmadan bitmiş sayma. Son olarak `flutter-clean-code` teslim kontrol listesinden geçir (boyut sınırları, `_buildX` yok, gömülü değer yok).
+8 dosya oluşur: model, service, repository, liste ViewModel'i, liste ekranı, tile widget'ı, repository ve ViewModel testleri. Var olan dosyaya dokunmaz. Script eksik `core/` dosyası bildirirse önce onları kur (`flutter-architecture/references/project-setup.md`).
 
-## 3b. Doküman
+## 3. Doldur
 
-`docs/MIMARI.md` özellik tablosuna yeni satır ekle; yeni paket eklendiyse `docs/KARARLAR.md`'ye kayıt (`flutter-project-docs`). Proje taşınıyorsa `docs/GECIS.md`.
+- Model alanları (`TODO(flutter-kit)` satırları), endpoint yolu / koleksiyon adı
+- Tile'da gösterilecek alanlar
+- Test verisindeki örnek nesneyi yeni alanlara göre güncelle
+- Detay ekranı, form, silme gibi script'in üretmediği parçalar: deseni `references/feature-template.md`'den al (sadece gerektiğinde oku)
+- Rota: `core/router/routes.dart` + `app_router.dart`
 
-## 4. Kullanıcıya rapor
+## 4. Kontrol
 
-Kısa bir özet ver:
-- Oluşturulan/değiştirilen dosyalar (ağaç olarak)
-- Yaptığın varsayımlar (ör. endpoint yolu, alan tipleri)
-- Kullanıcının yapması gereken şey varsa (ör. backend endpoint'i, Firestore kuralı)
+```bash
+dart run build_runner build -d && dart fix --apply && dart format .
+flutter analyze
+flutter test test/features/<feature>
+```
 
-## Sık yapılan hatalar — yapma
+Hata kalırsa düzelt. Çalıştıramadığın komutu "çalıştırılmadı" diye bildir.
 
-- Ekranda doğrudan `ref.read(ordersRepositoryProvider)` çağırmak → ViewModel üzerinden git.
-- ViewModel içinde `context.go(...)` → ViewModel `bool`/sonuç döner, navigasyonu ekran yapar.
-- Liste + detay için tek dev ViewModel → her ekrana bir ViewModel; detay için `orderDetailViewModelProvider(id)` (family).
-- Form state'ini `StatefulWidget` içinde `setState` ile tutmak → `TextEditingController`'lar widget'ta kalabilir ama doğrulama/gönderme durumu ViewModel'de.
-- `part` satırını unutmak veya build_runner'ı çalıştırmamak.
+## 5. Doküman ve rapor
+
+`docs/MIMARI.md` özellik tablosuna satır; yeni paket varsa `docs/KARARLAR.md`. Kullanıcıya: oluşan dosyalar, varsayımlar, onun yapması gerekenler (endpoint, Firestore kuralı).
+
+## Yapma
+
+- Ekrandan repository çağırmak → ViewModel üzerinden.
+- ViewModel'de `context.go` → ViewModel sonuç döner, navigasyonu ekran yapar.
+- Liste + detay için tek ViewModel → her ekrana bir ViewModel; detay için family (`productDetailViewModelProvider(id)`).

@@ -1,6 +1,6 @@
 ---
 name: flutter-firebase
-description: Flutter + Firebase — FlutterFire kurulumu, Firebase Auth (giriş, auth state, go_router redirect), Cloud Firestore Service/Repository desenleri (withConverter, stream, sorgu, batch/transaction), Timestamp dönüşümü, güvenlik kuralları ve emulator. Flutter projesinde Firebase/Firestore/Firebase Auth/Storage kullanılırken kullan.
+description: "Flutter + Firebase: FlutterFire kurulumu, Auth ve giriş yönlendirmesi, Firestore service/repository (withConverter, stream), güvenlik kuralları. Firebase kullanılan projelerde kullan."
 ---
 
 # Flutter + Firebase

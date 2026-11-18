@@ -1,6 +1,6 @@
 ---
 name: flutter-testing
-description: Flutter testleri — Repository unit testleri (mocktail), Riverpod ViewModel testleri (ProviderContainer.test + override), widget testleri (ProviderScope), Firebase için fake'ler ve test önceliklendirme. Flutter kodu için test yazarken, test çalışmıyorken veya "bunu nasıl test ederim" sorularında kullan.
+description: "Flutter testleri: repository (mocktail), ViewModel (ProviderContainer), widget testleri, Firebase fake'leri. Test yazarken veya test çalışmıyorken kullan."
 ---
 
 # Flutter Testleri

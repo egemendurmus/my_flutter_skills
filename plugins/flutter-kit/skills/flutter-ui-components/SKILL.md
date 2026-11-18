@@ -1,6 +1,6 @@
 ---
 name: flutter-ui-components
-description: Flutter UI'ı yeniden kullanılabilir widget'lara ayırma — tasarımdan (ekran görüntüsü, mockup, Figma) widget ağacı, tasarım token'ları ve ortak bileşen çıkarma; mevcut kodda tekrar eden widget'ları bulup core/widgets'a taşıma; bileşen kataloğunu güncel tutma. "Bu tasarımı koda dök", "tekrar eden widget'ları bul", "ortak bileşen çıkar", "UI kit / design system" isteklerinde kullan.
+description: "Tasarımdan (görsel/Figma) widget ağacı ve tema değerleri çıkarma, tekrar eden widget'ları bulup ortak bileşene çevirme, CATALOG.md. Tasarımı koda dökme ve ortak widget isteklerinde kullan."
 ---
 
 # UI Bileşenleri: Tasarımdan Widget'a, Tekrardan Ortak Bileşene
