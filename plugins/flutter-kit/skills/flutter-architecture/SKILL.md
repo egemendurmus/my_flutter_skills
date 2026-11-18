@@ -1,6 +1,6 @@
 ---
 name: flutter-architecture
-description: Flutter/Dart projelerinin mimari kuralları — feature-first klasör yapısı, MVVM (View + Riverpod ViewModel), Repository/Service katmanları, paket seçimi ve proje kurulumu. Flutter kodu yazarken, yeni Flutter projesi kurarken, mevcut kodu incelerken veya "bu dosya nereye gider / hangi paketi kullanayım" sorularında kullan.
+description: Flutter/Dart ve mobil uygulama projelerinin mimari kuralları (kullanıcı Flutter demese de mobil uygulama/app isteniyorsa) — feature-first klasör yapısı, MVVM (View + Riverpod ViewModel), Repository/Service katmanları, paket seçimi ve proje kurulumu. Flutter kodu yazarken, yeni Flutter projesi kurarken, mevcut kodu incelerken veya "bu dosya nereye gider / hangi paketi kullanayım" sorularında kullan.
 ---
 
 # Flutter Mimarisi

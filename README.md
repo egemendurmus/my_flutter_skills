@@ -83,6 +83,22 @@ Claude rapor ve sıra önerir; onay verdikçe önce temel kurulumu, sonra özell
 
 **Güncelleme:** skill'ler değişince terminalde `claude` → `/plugin marketplace update my-flutter-skills`.
 
+### Komutlar
+
+| Komut | Ne yapar |
+|---|---|
+| `/flutter-kit:yeni-proje barkod ve stok takip uygulaması` | Sıfırdan proje: yapı, paketler, ilk özellikler, testler, dokümanlar — sırayla |
+| `/flutter-kit:incele` | Son değişiklikleri kurallara göre inceler, rapor verir, onay alınca düzeltir |
+| `/flutter-kit:incele lib/features/stock` | Belirli bir klasörü inceler |
+
+Komut yazmak zorunlu değil; normal cümleyle istediğinde de ilgili skill devreye girer. Komut, işi garanti altına almak için.
+
+### Otomatik korumalar (hook'lar)
+
+Plugin kurulunca iki şey kendiliğinden çalışır:
+- **Her istekte hatırlatma:** Flutter projesindeysen veya boş klasörde "uygulama yap" gibi bir şey istediysen, Claude'a flutter-kit kurallarını kullanması söylenir. Böylece "Flutter" kelimesini yazmasan da doğru yapıyla başlar.
+- **Her `.dart` dosyası yazıldığında kontrol:** `dart format` uygulanır; ekranda Dio/Firestore çağrısı, `_buildX()` metodu, gömülü renk/padding/fontSize, 300 satırı aşan dosya, legacy Riverpod, `abstract`siz freezed sınıfı varsa Claude'a anında bildirilir ve düzeltir. Taşınma sürüyorsa (`docs/GECIS.md`) eski yapıdaki dosyalara dokunulmaz.
+
 ### Terminal (Claude Code CLI)
 
 Proje klasöründe `claude` çalıştırıp yukarıdaki `/plugin` komutlarını yaz; kullanım aynı.

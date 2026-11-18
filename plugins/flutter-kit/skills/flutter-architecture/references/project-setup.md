@@ -11,6 +11,8 @@ cd <proje_adi>
 
 `--org` ve platformları kullanıcının ihtiyacına göre sor/ayarla (web/windows gerekiyorsa ekle).
 
+**Varsayılan sayaç örneğini bırakma:** `lib/main.dart` içeriğini §5'teki bootstrap ile değiştir, `test/widget_test.dart`'ı sil. `flutter create` çıktısındaki demo kod projede kalmaz.
+
 ## 2. Paketler
 
 ```bash
