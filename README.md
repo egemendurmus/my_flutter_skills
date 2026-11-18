@@ -39,4 +39,3 @@ This heuristic check does not replace `flutter analyze` and `flutter test`.
 
 ### Acknowledgment
 
-The optional design-system, code-generation and reviewer workflows were informed by the public [VB10/flight_booking](https://github.com/VB10/flight_booking) educational refactoring project; this repository contains an independent Riverpod-oriented adaptation, not a copy of VB10's application.
