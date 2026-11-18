@@ -1,7 +1,7 @@
 {
-  "name": "serdar-flutter-skills",
+  "name": "my-flutter-skills",
   "owner": {
-    "name": "Serdar"
+    "name": "egemendurmus"
   },
   "metadata": {
     "description": "Flutter projeleri için kişisel Claude skill'leri: mimari, feature iskeleti, API/veri katmanı, Firebase ve test.",

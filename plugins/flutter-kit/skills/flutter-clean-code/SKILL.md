@@ -80,7 +80,7 @@ Satır sayımına üretilmiş dosyalar (`*.g.dart`, `*.freezed.dart`) dahil değ
 
 - "Ne" yaptığını yazma, kod söylüyor. "Neden" yaptığını yaz: iş kuralı, backend tuhaflığı, geçici çözüm.
 - `core/` altındaki public API'lere `///` dartdoc.
-- `// TODO(serdar): ...` formatında, sahipli ve açıklamalı TODO.
+- `// TODO(kullanici-adi): ...` formatında, sahipli ve açıklamalı TODO.
 
 ## 8. Biçim ve araçlar
 

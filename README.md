@@ -41,7 +41,7 @@ VS Code terminalini aç (`Ctrl+ö` veya `View → Terminal`) ve:
 ```
 claude
 /plugin marketplace add egemendurmus/my_flutter_skills
-/plugin install flutter-kit@serdar-flutter-skills
+/plugin install flutter-kit@my-flutter-skills
 /exit
 ```
 
@@ -73,7 +73,7 @@ Sağdaki Claude paneline normal yaz; ilgili skill kendiliğinden devreye girer. 
 
 **Mevcut projelerde:** önce yukarıdaki "analiz et, değiştirme" isteğiyle rapor al. Hepsini birden taşıma; yeni yazılan her şey yeni yapıyla, eski ekranlar el değdikçe.
 
-**Güncelleme:** skill'ler değişince terminalde `claude` → `/plugin marketplace update serdar-flutter-skills`.
+**Güncelleme:** skill'ler değişince terminalde `claude` → `/plugin marketplace update my-flutter-skills`.
 
 ### Terminal (Claude Code CLI)
 
