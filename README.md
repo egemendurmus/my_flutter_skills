@@ -1,49 +1,8 @@
-# My Flutter Skills
+# my_flutter_skills
 
-Reusable Flutter engineering standards for **Claude Code** and **ChatGPT**.
+Flutter projelerim için Claude skill'leri. Repo bir **Claude Code plugin marketplace**'i olarak düzenlenmiştir. İçinde tek bir plugin var: `flutter-kit`.
 
-## Available skill
-
-- **Flutter Engineering Standard v1.1**: Create new Flutter applications, evolve existing applications adaptively, implement features, build a design system, generate code and review architecture. Preferred new-project stack: feature-first MVVM, Riverpod 3, Dio, go_router and optional Freezed/json_serializable.
-
-Source: [`.claude/skills/flutter-engineering-standard/SKILL.md`](.claude/skills/flutter-engineering-standard/SKILL.md).
-
-## Claude Code — project installation
-
-Copy the complete `.claude/skills/flutter-engineering-standard/` directory into the **target Flutter repository** at the same relative path. Claude Code can then discover the project's skill. The included `agents/openai.yaml` is ChatGPT metadata; Claude Code doesn't require it.
-
-The optional reviewer is in `.claude/agents/flutter-architecture-reviewer.md`. Copy it to the target repository if you want a dedicated read-only reviewer.
-
-Skills in this centralized library **do not automatically become active in unrelated repositories**. Install or reference them for each target project.
-
-## ChatGPT
-
-Use the `flutter-engineering-standard/` folder (from inside `.claude/skills/`) when building a single-skill ZIP for your ChatGPT Skills library. The skill entrypoint is `SKILL.md` and includes `agents/openai.yaml`.
-
-## Standards
-
-- **CREATE:** feature-first structure, Riverpod 3, typed navigation, a proportional UI kit, reproducible code generation and tests.
-- **EVOLVE:** inspect first, preserve behavior, migrate incrementally, never force a state-management rewrite.
-- **REVIEW:** report evidence with file/line, severity and PASS/FAIL/NOT RUN status; never invent a passing test result.
-- **REMOTE CHANGES:** read-only by default; request explicit authorization before write operations.
-
-## Verification
-
-Run the non-destructive structural helper from the target Flutter repository:
-
-```bash
-python .claude/skills/flutter-engineering-standard/scripts/validate_structure.py .
-```
-
-This heuristic check does not replace `flutter analyze` and `flutter test`.
-
-### Acknowledgment
-
-## flutter-kit (Claude Code plugin)
-
-`plugins/flutter-kit/` altında, Claude Code plugin marketplace'i olarak kurulabilen 7 skill. Yukarıdaki `flutter-engineering-standard` süreç kurallarını (CREATE/EVOLVE/REVIEW) tanımlar; `flutter-kit` aynı stack için somut kod şablonları ve adım adım iş akışları verir.
-
-### İçerik
+## İçerik
 
 | Skill | Ne zaman devreye girer |
 |---|---|
@@ -55,7 +14,7 @@ This heuristic check does not replace `flutter analyze` and `flutter test`.
 | `flutter-firebase` | Firebase Auth / Firestore kullanırken; withConverter, stream, redirect, güvenlik kuralları |
 | `flutter-testing` | Test yazarken; mocktail, ProviderContainer.test, widget testleri, Firebase fake'leri |
 
-### Mimari özeti
+## Mimari özeti
 
 - **Flutter'ın resmi önerisi olan MVVM**: UI katmanı (View + ViewModel) ve veri katmanı (Repository + Service)
 - **Feature-first** klasör yapısı: `lib/features/<feature>/{data,ui}`
@@ -66,9 +25,9 @@ This heuristic check does not replace `flutter analyze` and `flutter test`.
 Screen → ViewModel → Repository → Service → Dio / Firestore
 ```
 
-### Kurulum
+## Kurulum
 
-#### Claude Code (önerilen)
+### Claude Code (önerilen)
 
 ```
 /plugin marketplace add egemendurmus/my_flutter_skills
@@ -77,7 +36,7 @@ Screen → ViewModel → Repository → Service → Dio / Firestore
 
 Güncelleme: repoya push ettikten sonra `/plugin marketplace update serdar-flutter-skills`.
 
-#### Elle (plugin olmadan)
+### Elle (plugin olmadan)
 
 ```bash
 cp -r plugins/flutter-kit/skills/* ~/.claude/skills/
@@ -85,11 +44,11 @@ cp -r plugins/flutter-kit/skills/* ~/.claude/skills/
 
 Tek bir projeye özel kullanmak için o projenin `.claude/skills/` klasörüne kopyala.
 
-#### Claude.ai sohbet
+### Claude.ai sohbet
 
 Her skill klasörünü (`plugins/flutter-kit/skills/<skill>`) ayrı ayrı zip'leyip claude.ai'deki skill ayarlarından yükle, ya da Claude'a "bu skill'i ekle" de.
 
-### Geliştirme
+## Geliştirme
 
 Bir skill'i değiştirirken:
 1. `SKILL.md` kısa kalsın (kurallar + adımlar). Uzun kod örnekleri `references/` altına.
