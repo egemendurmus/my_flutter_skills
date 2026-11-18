@@ -3,15 +3,25 @@
 # dart format uygular, flutter-kit kurallarını kontrol eder. İhlal varsa stderr'e yazıp
 # exit 2 döner; Claude Code bu mesajı Claude'a geri verir ve Claude düzeltir.
 
-input="$(cat)"
+# Kullanım:
+#   hook olarak: stdin'den JSON (tool_input.file_path) okur, dosyayı biçimlendirir ve kontrol eder
+#   elle:       check_dart_file.sh <dosya.dart> [proje_kökü]  → sadece kontrol eder, dosyayı değiştirmez
 project_dir="${CLAUDE_PROJECT_DIR:-$PWD}"
-
+review_mode=false
+if [ -n "$1" ]; then
+  review_mode=true
+  file="$1"
+  [ -n "$2" ] && project_dir="$2"
+  case "$file" in /*) ;; *) file="$project_dir/$file" ;; esac
+else
+input="$(cat)"
 if command -v python3 >/dev/null 2>&1; then
   file="$(printf '%s' "$input" | python3 -c "import json,sys
 try: print(json.load(sys.stdin).get('tool_input',{}).get('file_path',''))
 except Exception: pass" 2>/dev/null)"
 else
   file="$(printf '%s' "$input" | sed -n 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
+fi
 fi
 
 # Sadece lib/ altındaki elle yazılmış .dart dosyaları
@@ -32,13 +42,67 @@ case "$rel" in
   *) exit 0 ;;
 esac
 
-command -v dart >/dev/null 2>&1 && dart format "$file" >/dev/null 2>&1
+$review_mode || { command -v dart >/dev/null 2>&1 && dart format "$file" >/dev/null 2>&1; }
 
 problems=()
 add() { problems+=("$1"); }
 
 lines=$(wc -l < "$file" | tr -d ' ')
 [ "$lines" -gt 300 ] && add "Dosya $lines satır (sınır 300): widget'ları/yardımcıları ayrı dosyalara böl."
+
+# --- Dosya yeri ve adı ---
+name="$(basename "$file")"
+base="${name%.dart}"
+stem="$(printf '%s' "$base" | sed -E 's/_(controller|notifier|view_model|viewmodel|vm|provider|screen|page|view|service|api|datasource|data_source|repository|repo)$//')"
+
+suggest_place() {
+  # $1: feature adı
+  case "$name" in
+    *_controller.dart|*_notifier.dart|*_view_model.dart|*_viewmodel.dart|*_vm.dart|*_provider.dart)
+      echo "lib/features/$1/ui/view_models/${stem}_view_model.dart" ;;
+    *_screen.dart|*_page.dart|*_view.dart) echo "lib/features/$1/ui/screens/${stem}_screen.dart" ;;
+    *_service.dart|*_api.dart|*_datasource.dart|*_data_source.dart) echo "lib/features/$1/data/services/${stem}_service.dart" ;;
+    *_repository.dart|*_repo.dart) echo "lib/features/$1/data/repositories/${stem}_repository.dart" ;;
+    *) echo "model ise lib/features/$1/data/models/$name, widget ise lib/features/$1/ui/widgets/$name" ;;
+  esac
+}
+
+case "$rel" in
+  lib/features/*)
+    after="${rel#lib/features/}"
+    feature="${after%%/*}"
+    rest="${after#*/}"
+    [ "$rest" = "$after" ] && rest=""
+    case "$rest" in
+      data/models/*|ui/widgets/*|domain/use_cases/*) ;;
+      data/services/*)
+        case "$name" in *_service.dart) ;; *) add "Service dosyası '_service.dart' ile bitmeli: $(suggest_place "$feature")" ;; esac ;;
+      data/repositories/*)
+        case "$name" in *_repository.dart) ;; *) add "Repository dosyası '_repository.dart' ile bitmeli: $(suggest_place "$feature")" ;; esac ;;
+      ui/view_models/*)
+        case "$name" in *_view_model.dart|*_state.dart) ;; *) add "ViewModel dosyası '_view_model.dart' ile bitmeli (controller/notifier adı kullanılmaz): lib/features/$feature/ui/view_models/${stem}_view_model.dart" ;; esac ;;
+      ui/screens/*)
+        case "$name" in *_screen.dart) ;; *) add "Ekran dosyası '_screen.dart' ile bitmeli: lib/features/$feature/ui/screens/${stem}_screen.dart" ;; esac ;;
+      *)
+        add "Dosya yanlış yerde ($rel). Bir feature içinde sadece şu klasörler olur: data/models, data/services, data/repositories, ui/view_models, ui/screens, ui/widgets (gerekirse domain/use_cases). Doğru yer: $(suggest_place "$feature")" ;;
+    esac
+    while IFS= read -r m; do
+      add "Satır ${m%%:*}: sınıf adı Controller/Notifier ile bitiyor — <Ad>ViewModel olarak değiştir (provider adı da <ad>ViewModelProvider olur)."
+    done < <(grep -nE "^[[:space:]]*class[[:space:]]+[A-Z][A-Za-z0-9]*(Controller|Notifier)[[:space:]]+extends" "$file")
+    ;;
+  lib/core/*)
+    after="${rel#lib/core/}"
+    folder="${after%%/*}"
+    if [ "$folder" = "$after" ]; then
+      add "core/ altında klasörsüz dosya ($rel): config, constants, errors, extensions, firebase, models, network, router, theme, utils veya widgets klasörüne koy."
+    else
+      case "$folder" in
+        config|constants|errors|extensions|firebase|models|network|router|theme|utils|widgets) ;;
+        *) add "core/$folder/ standart bir klasör değil. Kullanılacaklar: config, constants, errors, extensions, firebase, models, network, router, theme, utils, widgets." ;;
+      esac
+    fi
+    ;;
+esac
 
 while IFS= read -r m; do
   add "Satır ${m%%:*}: widget döndüren metot (${m#*:}) — ayrı StatelessWidget sınıfına çevir."
@@ -89,7 +153,7 @@ if [ ${#problems[@]} -gt 0 ]; then
   {
     echo "flutter-kit kural ihlali — $rel:"
     for p in "${problems[@]}"; do echo "  - $p"; done
-    echo "Bunları şimdi düzelt (flutter-clean-code / flutter-architecture). Bilerek bırakıyorsan kullanıcıya nedenini söyle."
+    $review_mode || echo "Bunları şimdi düzelt (flutter-clean-code / flutter-architecture). Bilerek bırakıyorsan kullanıcıya nedenini söyle."
   } >&2
   exit 2
 fi

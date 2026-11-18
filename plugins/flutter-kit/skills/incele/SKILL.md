@@ -12,6 +12,12 @@ Kapsam: $ARGUMENTS — boşsa `git status` ve `git diff` (son commit'e göre) il
 
 ## Kontroller
 
+0. **Klasör yapısı ve kurallar (otomatik, tüm proje)** — plugin'in kural script'ini her dosya için çalıştır (bu skill'in dizininden iki üstteki `scripts/check_dart_file.sh`; dosyaları değiştirmez):
+   ```bash
+   find lib/core lib/features -name '*.dart' ! -name '*.g.dart' ! -name '*.freezed.dart' 2>/dev/null \
+     | while read -r f; do bash "<incele dizini>/../../scripts/check_dart_file.sh" "$f" "$PWD"; done
+   ```
+   Yanlış yerdeki dosyalar (ör. `features/product/product_controller.dart`), `controller`/`page` adları ve diğer ihlaller burada çıkar.
 1. **Mimari** — `flutter-architecture` kontrol listesi: katman ihlalleri, `core → features` importu, legacy Riverpod, freezed `abstract/sealed`.
 2. **Temiz kod** — `flutter-clean-code` teslim kontrol listesi: boyut sınırları, `_buildX`, `build` içinde mantık, gömülü değerler, `!`, boş `catch`, isimlendirme.
 3. **Tekrar** — `flutter-ui-components` skill'ini yükle; onun dizinindeki `scripts/find_widget_duplicates.py lib/` script'ini çalıştır (Python 3).

@@ -58,6 +58,11 @@ lib/
 test/                      # lib/ ile aynı yapı
 ```
 
+**Kesin kurallar (otomatik kontrol edilir):**
+- Bir feature klasöründe dosya **sadece** şu klasörlerde durur: `data/models`, `data/services`, `data/repositories`, `ui/view_models`, `ui/screens`, `ui/widgets` (gerekirse `domain/use_cases`). Feature kökünde veya `ui/` kökünde açıkta dosya olmaz.
+- İsimler tek tip: `*_view_model.dart` / `XViewModel` (**`controller`, `notifier` kullanılmaz**), `*_screen.dart` / `XScreen` (`page`, `view` kullanılmaz), `*_service.dart`, `*_repository.dart`. ViewModel'in state sınıfı ayrı dosyadaysa `ui/view_models/*_state.dart`.
+- `core/` altında sadece: `config, constants, errors, extensions, firebase, models, network, router, theme, utils, widgets`.
+
 Ayrıntılar ve isimlendirme: `references/folder-structure.md`.
 
 ## Bağımlılık kuralları (en önemli kısım)

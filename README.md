@@ -51,6 +51,7 @@ Plugin kurulduktan sonra bunlar kendiliğinden çalışır, bir şey yazman gere
   - 300 satırı aşan dosya
   - `core/` klasörünün bir feature'ı import etmesi
   - legacy Riverpod (`StateProvider` vb.), `abstract`/`sealed` olmayan freezed sınıfı
+  - **dosyanın yeri ve adı:** feature içinde açıkta duran dosya, `controller`/`notifier`/`page` adları, `core/` altında standart dışı klasör — doğru yolu da söyler
 
   Sadece yeni yapıdaki dosyalar (`lib/core/`, `lib/features/`) kontrol edilir. Henüz taşınmamış bir projede veya eski yapıdaki bir dosyada küçük bir düzeltme yapılırken refactor dayatılmaz.
 
