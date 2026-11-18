@@ -1,123 +1,175 @@
 # my_flutter_skills
 
-Flutter projelerim için Claude skill'leri. Repo bir **Claude Code plugin marketplace**'i olarak düzenlenmiştir. İçinde tek bir plugin var: `flutter-kit`.
+Flutter projeleri için Claude Code plugin'i: **flutter-kit**. Yeni projeyi baştan doğru yapıyla kurar, mevcut projeyi bozmadan bu yapıya taşır, kod yazarken kuralları otomatik kontrol eder ve projeye sonradan gelen geliştirici için dokümanları hazırlar.
 
-## İçerik
-
-| Skill | Ne zaman devreye girer |
-|---|---|
-| `flutter-architecture` | Flutter kodu yazarken, proje kurarken, kod incelerken; klasör yapısı, katman kuralları, paket seçimi |
-| `flutter-clean-code` | Her kod yazımında ve refactor'da: dosya/widget/fonksiyon boyut sınırları, widget çıkarma, `build` içinde mantık yok, sabitler, isimlendirme, git alışkanlıkları |
-| `flutter-ui-components` | Tasarımdan (görsel/Figma) widget ağacı ve token çıkarma; mevcut kodda tekrar eden widget'ları script ile bulma; `core/widgets/CATALOG.md` bileşen kataloğu |
-| `flutter-project-docs` | Projeye sonradan gelen geliştirici için `README`, `docs/MIMARI.md`, `docs/YENI_EKRAN.md`, `docs/KARARLAR.md` üretir ve güncel tutar |
-| `flutter-migrate-existing` | Çalışan projeyi bozmadan yeni yapıya geçirir: önce analiz/rapor, sonra özellik özellik taşıma; `docs/GECIS.md` ile eski/yeni ayrımı |
-| `flutter-feature-scaffold` | "Yeni ekran / feature ekle" isteklerinde; model → service → repository → ViewModel → ekran → rota → test |
-| `flutter-api-data` | REST API'ye bağlanırken; Dio, token interceptor, hata çevirme, sayfalama, upload |
-| `flutter-firebase` | Firebase Auth / Firestore kullanırken; withConverter, stream, redirect, güvenlik kuralları |
-| `flutter-testing` | Test yazarken; mocktail, ProviderContainer.test, widget testleri, Firebase fake'leri |
-
-## Mimari özeti
-
-- **Flutter'ın resmi önerisi olan MVVM**: UI katmanı (View + ViewModel) ve veri katmanı (Repository + Service)
-- **Feature-first** klasör yapısı: `lib/features/<feature>/{data,ui}`
-- **Riverpod 3** (codegen) ile state yönetimi ve bağımlılık enjeksiyonu
-- `go_router`, `dio`, `freezed` 3, `json_serializable`, `very_good_analysis`, `mocktail`
-
-```
-Screen → ViewModel → Repository → Service → Dio / Firestore
-```
-
-## Kurulum
-
-### VS Code'da adım adım (önerilen)
-
-**1. Claude Code eklentisini kur (bir kere)**
-`Ctrl+Shift+X` → "Claude Code" ara → yayıncısı **Anthropic** olanı kur → Claude hesabınla giriş yap. VS Code 1.98+ ve Claude Pro/Max/Team/Enterprise hesabı gerekir.
-
-**2. Flutter projesini aç**
-`File → Open Folder` ile proje klasörünü aç. Bir dosya açınca sağ üstte Claude simgesi (✱) çıkar; tıklayınca sohbet paneli açılır.
-
-**3. Plugin'i kur (bir kere)**
-VS Code terminalini aç (`Ctrl+ö` veya `View → Terminal`) ve:
+## Hızlı başlangıç
 
 ```
 claude
 /plugin marketplace add egemendurmus/my_flutter_skills
 /plugin install flutter-kit@my-flutter-skills
-/exit
 ```
 
-- Kapsam (scope) sorarsa **User** seç: plugin bütün projelerde geçerli olur.
-- Repo private ise önce terminalde `gh auth login` ile GitHub'a giriş yap.
-- Plugin hem terminalde hem VS Code panelinde çalışır; emin olmak için VS Code'u bir kez yeniden başlat.
+Sonra boş bir klasörde:
 
-**4. Kullan**
-Sağdaki Claude paneline normal yaz; ilgili skill kendiliğinden devreye girer. İlk denemeler:
+```
+/flutter-kit:yeni-proje barkod ve stok takip uygulaması
+```
 
-> Bu projeyi flutter-kit kurallarına göre analiz et. Neler uyumsuz, raporla ama hiçbir dosyayı değiştirme.
+Ayrıntılı kurulum: [VS Code'da kurulum](#vs-codeda-kurulum).
 
-> Ayarlar ekranı ekle: tema seçimi (açık/koyu) ve çıkış butonu olsun.
+## Mimari özeti
+
+- **MVVM**: Flutter'ın resmi mimari önerisi. UI katmanı (View + ViewModel), veri katmanı (Repository + Service)
+- **Feature-first** klasörler: `lib/core/` (ortak) + `lib/features/<özellik>/{data,ui}/`
+- **Paketler**: Riverpod 3 (codegen), go_router, Dio, freezed 3 + json_serializable, very_good_analysis, mocktail
+- **Minimum**: Flutter 3.27+, Dart 3.7+
+
+```
+Ekran → ViewModel → Repository → Service → API / Firebase
+```
+
+## Komutlar
+
+| Komut | Ne yapar |
+|---|---|
+| `/flutter-kit:yeni-proje <açıklama>` | Sıfırdan proje kurar, sırayla: soru sorar → yapı ve paketler → ilk özellikler → testler → dokümanlar. `flutter create`'in sayaç örneğini bırakmaz |
+| `/flutter-kit:incele` | Son değişiklikleri kurallara göre inceler, önem sırasıyla rapor verir; onay verirsen düzeltir |
+| `/flutter-kit:incele lib/features/stock` | Belirli bir klasörü/dosyayı inceler |
+
+Komut yazmak zorunlu değil: normal bir cümle yazdığında da ilgili skill devreye girer. Komut, doğru akışın çalışmasını garanti altına almak için.
+
+## Otomatik korumalar
+
+Plugin kurulduktan sonra bunlar kendiliğinden çalışır, bir şey yazman gerekmez:
+
+- **Her istekte hatırlatma:** Bir Flutter projesindeysen ya da boş bir klasörde "uygulama yap" gibi bir şey istediysen, Claude'a flutter-kit kurallarıyla çalışması söylenir. "Flutter" kelimesini yazmasan bile doğru yapıyla başlar. Proje henüz bu yapıda değilse önce taşıma planıyla başlaması söylenir.
+- **Her `.dart` dosyası yazıldığında kontrol:** `dart format` uygulanır. Ardından şunlar kontrol edilir; ihlal varsa Claude'a hemen bildirilir ve Claude düzeltir:
+  - ekranda Dio / Firestore / Firebase Auth kullanımı (katman ihlali)
+  - `_buildX()` şeklinde widget döndüren metot
+  - koda gömülü renk, padding ya da fontSize
+  - 300 satırı aşan dosya
+  - `core/` klasörünün bir feature'ı import etmesi
+  - legacy Riverpod (`StateProvider` vb.), `abstract`/`sealed` olmayan freezed sınıfı
+
+  Proje taşınma aşamasındaysa (`docs/GECIS.md` varsa), eski yapıdaki dosyalar kontrol edilmez.
+
+## Skill'ler
+
+| Skill | Ne zaman devreye girer |
+|---|---|
+| `yeni-proje` | Sıfırdan uygulama: diğer skill'leri doğru sırayla çalıştıran kontrol listesi |
+| `incele` | Kod inceleme: değiştirmeden rapor verir, onay alınca düzeltir |
+| `flutter-architecture` | Her Flutter işinde: klasör yapısı, katman kuralları, paketler, proje kurulum adımları |
+| `flutter-clean-code` | Her kod yazımında: boyut sınırları, widget çıkarma, `build` içinde mantık olmaması, sabitler, isimlendirme, git alışkanlıkları |
+| `flutter-feature-scaffold` | Yeni ekran/özellik: model → service → repository → ViewModel → ekran → rota → test |
+| `flutter-api-data` | REST API: Dio, token yenileme, hata çevirme, sayfalama, dosya yükleme |
+| `flutter-firebase` | Firebase Auth / Firestore: withConverter, stream, giriş yönlendirmesi, güvenlik kuralları |
+| `flutter-ui-components` | Tasarımdan (görsel/Figma) widget çıkarma, tekrar eden widget'ları bulan script, `CATALOG.md` bileşen kataloğu |
+| `flutter-testing` | Testler: mocktail, ProviderContainer.test, widget testleri, Firebase fake'leri |
+| `flutter-project-docs` | Yeni gelen geliştirici için `README`, `docs/MIMARI.md`, `docs/YENI_EKRAN.md`, `docs/KARARLAR.md`; bunları güncel tutar |
+| `flutter-migrate-existing` | Mevcut projeyi bozmadan taşıma: analiz → plan → özellik özellik taşıma, eski/yeni ayrımı `docs/GECIS.md`'de |
+
+## Kullanım
+
+### Yeni proje
+
+Boş bir klasör aç ve şunu yaz:
+
+> /flutter-kit:yeni-proje barkod ve stok takip uygulaması
+
+Claude önce proje adını, platformları ve backend'i (REST API / Firebase) sorar. Sonra yapıyı, ilk özellikleri, testleri ve dokümanları oluşturur.
+
+### Mevcut proje
+
+> Bu projeyi flutter-kit yapısına geçirmek istiyorum. Önce analiz et ve plan çıkar, hiçbir dosyayı değiştirme.
+
+Claude bir rapor ve taşıma sırası önerir. Sen onay verdikçe önce temel kurulumu yapar, sonra özellikleri tek tek taşır. Uygulama hiçbir aşamada bozulmaz. Geçiş süresince tek bir kural geçerli: **`lib/core` ve `lib/features` dışındaki her şey eski yapıdır.**
+
+### Günlük işler
 
 | Ne yapmak istiyorsun | Örnek istek |
 |---|---|
-| Yeni proje | "stok_takip adında yeni bir Flutter projesi kur, Android ve iOS" |
 | Yeni ekran | "Sipariş listesi ve detay ekranı ekle, veri /api/orders'dan geliyor" |
 | Firebase | "Kullanıcının değerlendirmelerini Firestore'dan canlı listeleyen ekran yap" |
 | Tasarımdan kod | Ekran görüntüsünü panele sürükle: "Bu tasarımı koda dök" |
 | Tekrar analizi | "Projede tekrar eden widget'ları bul, ortak bileşen öner" |
 | Temizlik | "order_detail_screen.dart spagetti olmuş, temizle" |
-| İnceleme | "Son değişiklikleri mimari kurallara göre incele" |
+| İnceleme | `/flutter-kit:incele` |
+| Doküman | "Yeni gelen geliştirici için dokümanları oluştur / güncelle" |
 
 İpuçları:
-- `@` yazıp dosya seçersen Claude o dosyaya odaklanır: `@lib/features/orders/ui/screens/orders_screen.dart bunu temizle`
-- Belirli bir skill'i zorlamak için adını yaz: "flutter-clean-code kurallarına göre düzenle"
-- Claude her değişikliği önce fark (diff) olarak gösterir; sen onaylayınca yazar.
+- `@` yazıp bir dosya seçersen Claude o dosyaya odaklanır: `@lib/features/orders/ui/screens/orders_screen.dart bunu temizle`
+- Belirli bir skill'i zorlamak için adını yazabilirsin: "flutter-clean-code kurallarına göre düzenle"
+- Claude her değişikliği önce fark (diff) olarak gösterir, sen onaylayınca yazar.
 
-**Mevcut projelerde:** şunu yaz:
+### Projeye yeni gelen biri
 
-> Bu projeyi flutter-kit yapısına geçirmek istiyorum. Önce analiz et ve plan çıkar, hiçbir dosyayı değiştirme.
+Projede şu sırayla okunur (yaklaşık 30 dk): `README.md` → `docs/MIMARI.md` → `docs/YENI_EKRAN.md` → `docs/KARARLAR.md`. Bu dosyalar `flutter-project-docs` ile oluşturulur ve her değişiklikte güncellenir.
 
-Claude rapor ve sıra önerir; onay verdikçe önce temel kurulumu, sonra özellikleri tek tek taşır. Geçiş boyunca `docs/GECIS.md` hangi kısmın eski hangisinin yeni olduğunu gösterir. Kural basit: `lib/core` ve `lib/features` dışındaki her şey eski yapıdır.
+## VS Code'da kurulum
 
-**Projeye yeni gelen biri için:** projede `README.md` → `docs/MIMARI.md` → `docs/YENI_EKRAN.md` sırasıyla okunur (~30 dk). Bu dokümanlar `flutter-project-docs` skill'iyle oluşturulur ve her değişiklikte güncellenir. Eksikse: "Bu proje için yeni gelen geliştiriciye yönelik dokümanları oluştur".
+1. **Claude Code eklentisi (bir kere):** Eklentiler bölümünü aç (Mac: `Cmd+Shift+X`, Windows: `Ctrl+Shift+X`), "Claude Code" diye ara ve yayıncısı **Anthropic** olanı kur. Ardından Claude hesabınla giriş yap. VS Code 1.98+ ve Claude Pro, Max, Team ya da Enterprise hesabı gerekir.
+2. **Projeyi aç:** `File → Open Folder`. Bir dosya açınca sağ üstte Claude simgesi (✱) çıkar, tıklayınca sohbet paneli açılır.
+3. **Plugin'i kur (bir kere):** `View → Terminal` ile terminali aç ve şunları yaz:
+   ```
+   claude
+   /plugin marketplace add egemendurmus/my_flutter_skills
+   /plugin install flutter-kit@my-flutter-skills
+   /exit
+   ```
+   - Kapsam (scope) sorarsa **User** seç, plugin bütün projelerde geçerli olur.
+   - Repo private ise önce terminalde `gh auth login` ile GitHub'a giriş yap.
+4. **VS Code'u yeniden başlat.** Hook'lar yeni oturumda yüklenir.
 
-**Güncelleme:** skill'ler değişince terminalde `claude` → `/plugin marketplace update my-flutter-skills`.
+Terminalden kullanmak istersen proje klasöründe `claude` yazman yeterli, kullanım aynı.
 
-### Komutlar
+**Gereksinimler:** macOS veya Linux (hook'lar bash script'i). `python3` varsa daha sağlam çalışır ama zorunlu değil. `dart` PATH'teyse dosyalar otomatik biçimlendirilir.
 
-| Komut | Ne yapar |
-|---|---|
-| `/flutter-kit:yeni-proje barkod ve stok takip uygulaması` | Sıfırdan proje: yapı, paketler, ilk özellikler, testler, dokümanlar — sırayla |
-| `/flutter-kit:incele` | Son değişiklikleri kurallara göre inceler, rapor verir, onay alınca düzeltir |
-| `/flutter-kit:incele lib/features/stock` | Belirli bir klasörü inceler |
+## Güncelleme
 
-Komut yazmak zorunlu değil; normal cümleyle istediğinde de ilgili skill devreye girer. Komut, işi garanti altına almak için.
+Repoda değişiklik yapıldıktan sonra:
 
-### Otomatik korumalar (hook'lar)
+```
+claude
+/plugin marketplace update my-flutter-skills
+```
 
-Plugin kurulunca iki şey kendiliğinden çalışır:
-- **Her istekte hatırlatma:** Flutter projesindeysen veya boş klasörde "uygulama yap" gibi bir şey istediysen, Claude'a flutter-kit kurallarını kullanması söylenir. Böylece "Flutter" kelimesini yazmasan da doğru yapıyla başlar.
-- **Her `.dart` dosyası yazıldığında kontrol:** `dart format` uygulanır; ekranda Dio/Firestore çağrısı, `_buildX()` metodu, gömülü renk/padding/fontSize, 300 satırı aşan dosya, legacy Riverpod, `abstract`siz freezed sınıfı varsa Claude'a anında bildirilir ve düzeltir. Taşınma sürüyorsa (`docs/GECIS.md`) eski yapıdaki dosyalara dokunulmaz.
+Sonra VS Code'u yeniden başlat (ya da oturumda `/reload-plugins` yaz).
 
-### Terminal (Claude Code CLI)
-
-Proje klasöründe `claude` çalıştırıp yukarıdaki `/plugin` komutlarını yaz; kullanım aynı.
-
-### Elle (plugin olmadan)
+## Plugin olmadan kullanım
 
 ```bash
 cp -r plugins/flutter-kit/skills/* ~/.claude/skills/
 ```
 
-Tek bir projeye özel kullanmak için o projenin `.claude/skills/` klasörüne kopyala.
+Bu şekilde skill'ler çalışır ama **otomatik korumalar (hook'lar) çalışmaz**. Mümkünse plugin olarak kur.
 
-### Claude.ai sohbet
+Claude.ai sohbetinde de skill'ler yüklenebilir (her klasör ayrı zip olarak). Ancak orada hook'lar ve script'ler çalışmaz; asıl kullanım yeri Claude Code.
 
-Her skill klasörünü (`plugins/flutter-kit/skills/<skill>`) ayrı ayrı zip'leyip claude.ai'deki skill ayarlarından yükle, ya da Claude'a "bu skill'i ekle" de.
+## Repo yapısı
+
+```
+.claude-plugin/marketplace.json     marketplace tanımı (my-flutter-skills)
+plugins/flutter-kit/
+├── .claude-plugin/plugin.json      plugin tanımı ve sürüm
+├── hooks/hooks.json                otomatik korumalar
+├── scripts/                        hook script'leri
+│   ├── prompt_context.sh           her istekte hatırlatma
+│   └── check_dart_file.sh          .dart dosyası kontrolü
+└── skills/<skill>/
+    ├── SKILL.md                    kurallar ve adımlar
+    ├── references/                 kod şablonları, örnekler
+    └── scripts/                    yardımcı script'ler (varsa)
+```
 
 ## Geliştirme
 
 Bir skill'i değiştirirken:
-1. `SKILL.md` kısa kalsın (kurallar + adımlar). Uzun kod örnekleri `references/` altına.
-2. `description` satırı skill'in ne zaman tetikleneceğini belirler; net ve anahtar kelimeli yaz.
-3. Değişiklikten sonra gerçek bir projede dene, `plugin.json`'daki `version`'ı artır, commit + push.
+1. `SKILL.md` kısa kalsın (kurallar ve adımlar). Uzun kod örnekleri `references/` altına gider.
+2. `description` satırı skill'in ne zaman devreye gireceğini belirler. Net ve anahtar kelimeli yaz.
+3. Sürümü **iki yerde** artır: `.claude-plugin/marketplace.json` ve `plugins/flutter-kit/.claude-plugin/plugin.json`. Sürüm artmazsa kullanıcılar güncellemeyi almaz.
+4. Kontrol: `claude plugin validate .` ve `claude plugin validate plugins/flutter-kit`
+5. Gerçek bir projede dene, sonra commit ve push.
+
+Claude bir şeyi istemediğin şekilde yaptığında, bunu ilgili skill'e kural olarak ekle. Skill'ler bu şekilde olgunlaşır.
