@@ -1,0 +1,18 @@
+      GoRoute(path: Routes.__feature__, builder: (_, _) => const __Model__ListScreen()), //@df
+      GoRoute( //@D|F
+        path: Routes.__feature__, //@D|F
+        builder: (_, _) => const __Model__ListScreen(), //@D|F
+        routes: [ //@D|F
+          GoRoute( //@D
+            path: Routes.__model__Detail, //@D
+            builder: (_, state) => //@D
+                __Model__DetailScreen(id: state.pathParameters['id'] ?? ''), //@D
+          ), //@D
+          GoRoute( //@F
+            path: Routes.__model__Form, //@F
+            // Düzenlemede kayıt `extra` ile gelir; yoksa yeni kayıt. //@F
+            builder: (_, state) => //@F
+                __Model__FormScreen(initial: state.extra as __Model__?), //@F
+          ), //@F
+        ], //@D|F
+      ), //@D|F

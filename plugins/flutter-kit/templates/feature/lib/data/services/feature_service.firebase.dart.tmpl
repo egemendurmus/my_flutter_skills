@@ -1,0 +1,36 @@
+import 'package:__APP__/core/firebase/firebase_providers.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '__FEATURE___service.g.dart';
+
+class __Feature__Service {
+  __Feature__Service(this._db);
+  final FirebaseFirestore _db;
+
+  // TODO(flutter-kit): Koleksiyon adını ve sorguyu düzenle.
+  CollectionReference<__Model__> get _collection =>
+      _db.collection('__FEATURE__').withConverter<__Model__>(
+            fromFirestore: (snap, _) =>
+                __Model__.fromJson({...snap.data()!, 'id': snap.id}),
+            toFirestore: (item, _) => item.toJson()..remove('id'),
+          );
+
+  Stream<List<__Model__>> watchAll() => _collection
+      .limit(100)
+      .snapshots()
+      .map((query) => query.docs.map((doc) => doc.data()).toList());
+
+  Future<__Model__?> getById(String id) async =>
+      (await _collection.doc(id).get()).data();
+
+  // Yeni kayıtta doküman id'sini Firestore verir.                          //@F
+  Future<void> create(__Model__ item) => _collection.add(item);             //@F
+                                                                            //@F
+  Future<void> update(__Model__ item) => _collection.doc(item.id).set(item); //@F
+}
+
+@riverpod
+__Feature__Service __feature__Service(Ref ref) =>
+    __Feature__Service(ref.watch(firestoreProvider));

@@ -1,0 +1,37 @@
+import 'package:__APP__/core/network/dio_provider.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '__FEATURE___service.g.dart';
+
+class __Feature__Service {
+  __Feature__Service(this._dio);
+  final Dio _dio;
+
+  // TODO(flutter-kit): Endpoint yolunu backend'e göre düzenle.
+  static const _path = '/__FEATURE__';
+
+  Future<List<__Model__>> getAll() async {
+    final res = await _dio.get<List<dynamic>>(_path);
+    return res.data!
+        .map((e) => __Model__.fromJson(e as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<__Model__> getById(String id) async {
+    final res = await _dio.get<Map<String, dynamic>>('$_path/$id');
+    return __Model__.fromJson(res.data!);
+  }
+
+  // Yeni kayıtta id'yi sunucu verir.                                       //@F
+  Future<void> create(__Model__ item) =>                                    //@F
+      _dio.post<void>(_path, data: item.toJson()..remove('id'));            //@F
+                                                                            //@F
+  Future<void> update(__Model__ item) =>                                    //@F
+      _dio.put<void>('$_path/${item.id}', data: item.toJson());             //@F
+}
+
+@riverpod
+__Feature__Service __feature__Service(Ref ref) =>
+    __Feature__Service(ref.watch(dioProvider));

@@ -1,0 +1,35 @@
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/repositories/__FEATURE___repository.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___list_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _Mock__Feature__Repository extends Mock
+    implements __Feature__Repository {}
+
+void main() {
+  late _Mock__Feature__Repository repository;
+  late ProviderContainer container;
+
+  const item = __Model__(id: '1', name: 'Örnek');
+
+  setUp(() {
+    repository = _Mock__Feature__Repository();
+    container = ProviderContainer(
+      retry: (_, _) => null,
+      overrides: [
+        __feature__RepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+  });
+
+  test('akıştaki ilk listeyi verir', () async {
+    when(() => repository.watchAll()).thenAnswer((_) => Stream.value([item]));
+
+    // autoDispose provider: dinleyici yoksa ilk değerden önce kapanır.
+    container.listen(__model__ListViewModelProvider, (_, _) {});
+    expect(await container.read(__model__ListViewModelProvider.future), [item]);
+  });
+}

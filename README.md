@@ -140,7 +140,11 @@ Senin yapabileceklerin:
 
 Terminalden kullanmak istersen proje klasöründe `claude` yazman yeterli, kullanım aynı.
 
-**Gereksinimler:** macOS, Linux veya Windows'ta Git Bash (hook'lar bash script'i). `python3` varsa daha sağlam çalışır ama zorunlu değil. `dart` PATH'teyse dosyalar otomatik biçimlendirilir.
+**Gereksinimler:** Hook'lar ve script'ler bash ile çalışır.
+
+- **macOS / Linux:** Ek bir şey gerekmez, bash sistemde hazır gelir. macOS'un eski bash 3.2'si ve BSD `sed`/`grep`'i ile uyumludur (CI her push'ta macOS'ta da test eder).
+- **Windows:** [Git for Windows](https://git-scm.com/download/win) kurulu olmalı (içinden Git Bash gelir). Git Bash yoksa hook'lar sessizce çalışmaz: kurallar kontrol edilmez, hatırlatma gelmez. Kontrol için terminalde `bash --version` yaz; çıktı geliyorsa tamam.
+- `python3` varsa daha sağlam çalışır ama zorunlu değil. `dart` PATH'teyse dosyalar otomatik biçimlendirilir.
 
 ## Güncelleme
 
@@ -175,14 +179,18 @@ plugins/flutter-kit/
 │   ├── check_dart_file.sh          .dart dosyası kontrolü (elle: tüm proje taraması)
 │   ├── setup_core.sh               lib/core + main/app kurulumu (reference'lardan)
 │   └── new_feature.sh              yeni özellik iskeleti (8 dosya + rota; --with-detail, --with-form)
+├── templates/feature/              new_feature.sh'in Dart şablonları (*.dart.tmpl)
 └── skills/<skill>/
     ├── SKILL.md                    kurallar ve adımlar
     ├── references/                 kod şablonları, örnekler
     └── scripts/                    yardımcı script'ler (varsa)
+tests/hook_test.sh                  kural hook'u testleri (fixture'lar: tests/hook_fixtures/, Flutter gerekmez)
 tests/e2e.sh                        uçtan uca test (gerçek Flutter projesinde)
-.github/workflows/e2e.yml           e2e: her push + haftalık, Linux ve Windows
+.github/workflows/e2e.yml           her push + haftalık: Linux, Windows ve macOS
 ```
 
+> `new_feature.sh` iskelet kodunu `templates/feature/` altındaki `.dart.tmpl` dosyalarından alır. Yer tutucular: `__Model__`, `__model__`, `__MODEL__` (PascalCase / camelCase / snake_case; aynısı `__Feature__` için), `__APP__`. Satır sonundaki `//@D`, `//@F`, `//@R`, `//@B` işaretleri satırı detay / form / otomatik rota / Firebase bayrağına bağlar (küçük harf = kapalıyken).
+>
 > `setup_core.sh` kodu `references/` içindeki ```` ```dart ```` bloklarından alır: hedef yol bloğun ilk satırındaki `// lib/core/x.dart` yorumundan veya üstteki `## core/x.dart` başlığından okunur. Reference'taki bir kod bloğunu değiştirirken bu biçimi koru.
 
 ## Geliştirme
@@ -192,7 +200,8 @@ Bir skill'i değiştirirken:
 2. `description` satırı skill'in ne zaman devreye gireceğini belirler. Net ve anahtar kelimeli yaz.
 3. Sürümü **iki yerde** artır: `.claude-plugin/marketplace.json` ve `plugins/flutter-kit/.claude-plugin/plugin.json`. Sürüm artmazsa kullanıcılar güncellemeyi almaz.
 4. Kontrol: `claude plugin validate .` ve `claude plugin validate plugins/flutter-kit`
-5. `bash tests/e2e.sh` — skill kodu gerçek projede derleniyor, analizden ve testten geçiyor mu (Flutter gerekir, ~3-5 dk). CI aynısını her push'ta ve haftalık çalıştırır.
-6. Commit ve push.
+5. `bash tests/hook_test.sh` — kural hook'u doğru uyarıyı veriyor mu, yanlış alarm var mı (saniyeler sürer). `check_dart_file.sh`'ye kural eklerken `tests/hook_fixtures/lib/` altına bir örnek dosya ekle; beklenen mesajı dosyanın başına `// expect: <mesaj>` olarak yaz (temiz olmalıysa `// expect: clean`).
+6. `bash tests/e2e.sh` — skill kodu gerçek projede derleniyor, analizden ve testten geçiyor mu (Flutter gerekir, ~3-5 dk). CI aynısını her push'ta ve haftalık çalıştırır.
+7. Commit ve push.
 
 Claude bir şeyi istemediğin şekilde yaptığında, bunu ilgili skill'e kural olarak ekle. Skill'ler bu şekilde olgunlaşır.

@@ -1,0 +1,31 @@
+import 'package:__APP__/core/extensions/context_extensions.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___form_view_model.dart';
+import 'package:__APP__/features/__FEATURE__/ui/widgets/__MODEL___form_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class __Model__FormScreen extends ConsumerWidget {
+  const __Model__FormScreen({super.key, this.initial});
+
+  /// null ise yeni kayıt.
+  final __Model__? initial;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen(
+      __model__FormViewModelProvider(initial).select((s) => s.errorMessage),
+      (_, message) {
+        if (message != null) context.showSnack(message);
+      },
+    );
+
+    return Scaffold(
+      // TODO(flutter-kit): Başlıkları l10n / AppStrings'e taşı.
+      appBar: AppBar(
+        title: Text(initial == null ? 'Yeni kayıt' : 'Düzenle'),
+      ),
+      body: __Model__FormView(initial: initial),
+    );
+  }
+}

@@ -1,0 +1,48 @@
+import 'package:__APP__/core/constants/app_spacing.dart';
+import 'package:__APP__/core/widgets/app_empty_view.dart';
+import 'package:__APP__/core/widgets/app_error_view.dart';
+import 'package:__APP__/core/widgets/app_loading_view.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___list_view_model.dart';
+import 'package:__APP__/features/__FEATURE__/ui/widgets/__MODEL___tile.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:__APP__/core/router/routes.dart'; //@DR|FR
+import 'package:go_router/go_router.dart'; //@DR|FR
+
+class __Model__ListScreen extends ConsumerWidget {
+  const __Model__ListScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final items = ref.watch(__model__ListViewModelProvider);
+
+    return Scaffold(
+      // TODO(flutter-kit): Başlık ve metinleri l10n / AppStrings'e taşı.
+      appBar: AppBar(title: const Text('__Feature__')),
+      floatingActionButton: FloatingActionButton( //@FR
+        onPressed: () => context.push(Routes.__model__FormPath), //@FR
+        child: const Icon(Icons.add), //@FR
+      ), //@FR
+      body: switch (items) {
+        AsyncData(:final value) when value.isEmpty =>
+          const AppEmptyView(message: 'Kayıt yok'),
+        AsyncData(:final value) => ListView.separated(
+            padding: AppSpacing.page,
+            itemCount: value.length,
+            separatorBuilder: (_, _) => AppGap.sm,
+            itemBuilder: (_, index) => __Model__Tile(item: value[index]), //@d|r
+            itemBuilder: (_, index) => __Model__Tile( //@DR
+              item: value[index], //@DR
+              onTap: () => //@DR
+                  context.push(Routes.__model__DetailPath(value[index].id)), //@DR
+            ), //@DR
+          ),
+        AsyncError(:final error) => AppErrorView(
+            error: error,
+            onRetry: () => ref.invalidate(__model__ListViewModelProvider),
+          ),
+        _ => const AppLoadingView(),
+      },
+    );
+  }
+}

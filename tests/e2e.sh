@@ -49,7 +49,7 @@ run pub_add_dev flutter pub add dev:build_runner dev:riverpod_generator dev:free
 awk '/^## 3\./ { s = 1 } s && /^```yaml/ { b = 1; next } b && /^```/ { exit } b' \
   "$KIT/skills/flutter-architecture/references/project-setup.md" > analysis_options.yaml
 grep -q very_good_analysis analysis_options.yaml && ok "analysis_options.yaml" || fail "analysis_options.yaml çıkarılamadı"
-grep -E '^\s+(flutter_riverpod|riverpod_annotation|freezed|dio|cloud_firestore|go_router):' pubspec.yaml | sed 's/^ */    /'
+grep -E '^[[:space:]]+(flutter_riverpod|riverpod_annotation|freezed|dio|cloud_firestore|go_router):' pubspec.yaml | sed 's/^ */    /'
 
 step "2. Script'ler"
 run setup_core_rest bash "$KIT/scripts/setup_core.sh" --source rest --project "$APP" --force-entry
@@ -63,7 +63,7 @@ run feature_detail_only bash "$KIT/scripts/new_feature.sh" notes --source fireba
   && [ "$(grep -c 'path: Routes.notes,' lib/core/router/app_router.dart)" = 1 ] \
   && ok "tek bayrakta (sadece form / sadece detay) rota bir kez eklendi" || fail "tek bayrakta rota tekrarlandı veya eksik"
 grep -q "UYARI" "$LOG/feature_rest.log" "$LOG/feature_firebase.log" && fail "new_feature eksik core dosyası bildirdi"
-n_rest="$(grep -cE '^\s+\+' "$LOG/feature_rest.log")"; n_plain="$(grep -cE '^\s+\+' "$LOG/feature_plain.log")"
+n_rest="$(grep -cE '^[[:space:]]+\+' "$LOG/feature_rest.log")"; n_plain="$(grep -cE '^[[:space:]]+\+' "$LOG/feature_plain.log")"
 [ "$n_rest" = 16 ] && [ "$n_plain" = 8 ] && ok "dosya sayısı: detay+form 16, bayraksız 8" || fail "dosya sayısı: detay+form $n_rest (16), bayraksız $n_plain (8)"
 grep -q "açılış ekranı" "$LOG/feature_rest.log" && ok "ilk feature açılış ekranı oldu" || fail "rota/açılış ekranı eklenmedi"
 grep -q "Routes.stock" lib/core/router/app_router.dart && ok "ikinci feature rotası eklendi" || fail "ikinci rota eklenmedi"

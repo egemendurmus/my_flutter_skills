@@ -1,0 +1,46 @@
+import 'package:__APP__/core/constants/app_spacing.dart';
+import 'package:__APP__/core/widgets/app_button.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___form_view_model.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class __Model__FormView extends ConsumerWidget {
+  const __Model__FormView({super.key, this.initial});
+
+  final __Model__? initial;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final provider = __model__FormViewModelProvider(initial);
+    final state = ref.watch(provider);
+    final viewModel = ref.read(provider.notifier);
+
+    // TODO(flutter-kit): Alanları ve etiketleri (l10n) düzenle.
+    return ListView(
+      padding: AppSpacing.page,
+      children: [
+        TextFormField(
+          initialValue: state.name,
+          decoration: const InputDecoration(labelText: 'Ad'),
+          textInputAction: TextInputAction.done,
+          onChanged: viewModel.setName,
+        ),
+        AppGap.lg,
+        AppButton(
+          label: 'Kaydet',
+          isLoading: state.isSubmitting,
+          onPressed: state.canSubmit ? () => _submit(context, viewModel) : null,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _submit(
+    BuildContext context,
+    __Model__FormViewModel viewModel,
+  ) async {
+    final isSaved = await viewModel.submit();
+    if (isSaved && context.mounted) Navigator.of(context).pop();
+  }
+}

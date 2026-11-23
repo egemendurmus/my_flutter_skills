@@ -1,0 +1,36 @@
+import 'package:__APP__/core/firebase/firebase_exception_mapper.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/services/__FEATURE___service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '__FEATURE___repository.g.dart';
+
+class __Feature__Repository {
+  __Feature__Repository(this._service);
+  final __Feature__Service _service;
+
+  // Sadece FirebaseException çevrilir; diğer hatalar olduğu gibi geçer.
+  Stream<List<__Model__>> watchAll() => _service.watchAll().handleError(
+        (Object e) => throw mapFirebaseException(e as FirebaseException),
+        test: (e) => e is FirebaseException,
+      );
+
+  Future<__Model__?> fetchById(String id) => _guard(() => _service.getById(id));
+
+  Future<void> create(__Model__ item) => _guard(() => _service.create(item)); //@F
+                                                                            //@F
+  Future<void> update(__Model__ item) => _guard(() => _service.update(item)); //@F
+
+  Future<T> _guard<T>(Future<T> Function() call) async {
+    try {
+      return await call();
+    } on FirebaseException catch (e) {
+      throw mapFirebaseException(e);
+    }
+  }
+}
+
+@riverpod
+__Feature__Repository __feature__Repository(Ref ref) =>
+    __Feature__Repository(ref.watch(__feature__ServiceProvider));

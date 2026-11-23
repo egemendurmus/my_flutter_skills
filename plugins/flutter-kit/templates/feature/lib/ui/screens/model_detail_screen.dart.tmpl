@@ -1,0 +1,43 @@
+import 'package:__APP__/core/widgets/app_error_view.dart';
+import 'package:__APP__/core/widgets/app_loading_view.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___detail_view_model.dart';
+import 'package:__APP__/features/__FEATURE__/ui/widgets/__MODEL___detail_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:__APP__/core/router/routes.dart'; //@FR
+import 'package:go_router/go_router.dart'; //@FR
+
+class __Model__DetailScreen extends ConsumerWidget {
+  const __Model__DetailScreen({required this.id, super.key});
+
+  final String id;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final item = ref.watch(__model__DetailViewModelProvider(id));
+
+    return Scaffold(
+      // TODO(flutter-kit): Başlığı l10n / AppStrings'e taşı.
+      appBar: AppBar( //@FR
+        title: const Text('Detay'), //@FR
+        actions: [ //@FR
+          if (item.value case final value?) //@FR
+            IconButton( //@FR
+              icon: const Icon(Icons.edit), //@FR
+              onPressed: () => //@FR
+                  context.push(Routes.__model__FormPath, extra: value), //@FR
+            ), //@FR
+        ], //@FR
+      ), //@FR
+      appBar: AppBar(title: const Text('Detay')), //@f|r
+      body: switch (item) {
+        AsyncData(:final value) => __Model__DetailView(item: value),
+        AsyncError(:final error) => AppErrorView(
+            error: error,
+            onRetry: () => ref.invalidate(__model__DetailViewModelProvider(id)),
+          ),
+        _ => const AppLoadingView(),
+      },
+    );
+  }
+}

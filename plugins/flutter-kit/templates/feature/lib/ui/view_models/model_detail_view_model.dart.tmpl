@@ -1,0 +1,18 @@
+import 'package:__APP__/core/errors/app_exception.dart'; //@B
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/repositories/__FEATURE___repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '__MODEL___detail_view_model.g.dart';
+
+// Kullanım: ref.watch(__model__DetailViewModelProvider(id))
+@riverpod
+class __Model__DetailViewModel extends _$__Model__DetailViewModel {
+  @override
+  Future<__Model__> build(String id) => //@b
+      ref.watch(__feature__RepositoryProvider).fetchById(id); //@b
+  Future<__Model__> build(String id) async { //@B
+    final item = await ref.watch(__feature__RepositoryProvider).fetchById(id); //@B
+    return item ?? (throw const NotFoundException()); //@B
+  } //@B
+}

@@ -132,7 +132,7 @@ case "$rel" in
     done < <(grep -nE "import 'package:(dio|http|cloud_firestore|firebase_auth|firebase_storage|sqflite|drift|mssql_connection)/" "$file")
     while IFS= read -r m; do
       add "Satır ${m%%:*}: UI içinde Dio()/FirebaseFirestore.instance — Service katmanına taşı."
-    done < <(grep -nE "(^|[^A-Za-z_])Dio\(|FirebaseFirestore\.instance|FirebaseAuth\.instance" "$file")
+    done < <(grep -nE "(^|[^A-Za-z_])Dio\(|FirebaseFirestore\.instance|FirebaseAuth\.instance" "$file" | grep -vE "^[0-9]+:[[:space:]]*//")
     ;;
 esac
 

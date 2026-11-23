@@ -1,0 +1,37 @@
+import 'package:__APP__/core/errors/app_exception.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/repositories/__FEATURE___repository.dart';
+import 'package:__APP__/features/__FEATURE__/data/services/__FEATURE___service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _Mock__Feature__Service extends Mock implements __Feature__Service {}
+
+void main() {
+  late _Mock__Feature__Service service;
+  late __Feature__Repository repository;
+
+  const item = __Model__(id: '1', name: 'Örnek');
+
+  setUp(() {
+    service = _Mock__Feature__Service();
+    repository = __Feature__Repository(service);
+  });
+
+  test('watchAll kayıtları akıtır', () {
+    when(() => service.watchAll()).thenAnswer((_) => Stream.value([item]));
+
+    expect(repository.watchAll(), emits([item]));
+  });
+
+  test('Firestore erişilemezse NetworkException verir', () {
+    when(() => service.watchAll()).thenAnswer(
+      (_) => Stream.error(
+        FirebaseException(plugin: 'cloud_firestore', code: 'unavailable'),
+      ),
+    );
+
+    expect(repository.watchAll(), emitsError(isA<NetworkException>()));
+  });
+}

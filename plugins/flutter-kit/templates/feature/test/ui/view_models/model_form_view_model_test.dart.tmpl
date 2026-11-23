@@ -1,0 +1,75 @@
+import 'package:__APP__/core/errors/app_exception.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/repositories/__FEATURE___repository.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___form_view_model.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _Mock__Feature__Repository extends Mock
+    implements __Feature__Repository {}
+
+void main() {
+  late _Mock__Feature__Repository repository;
+  late ProviderContainer container;
+
+  const item = __Model__(id: '1', name: 'Örnek');
+
+  setUpAll(() => registerFallbackValue(item));
+
+  setUp(() {
+    repository = _Mock__Feature__Repository();
+    container = ProviderContainer(
+      retry: (_, _) => null,
+      overrides: [
+        __feature__RepositoryProvider.overrideWithValue(repository),
+      ],
+    );
+    addTearDown(container.dispose);
+  });
+
+  __Model__FormViewModel listenTo(__Model__? initial) {
+    final provider = __model__FormViewModelProvider(initial);
+    container.listen(provider, (_, _) {});
+    return container.read(provider.notifier);
+  }
+
+  test('ad boşsa kaydetmez', () async {
+    final viewModel = listenTo(null);
+
+    expect(await viewModel.submit(), isFalse);
+    verifyNever(() => repository.create(any()));
+  });
+
+  test('yeni kayıtta create çağırır', () async {
+    when(() => repository.create(any())).thenAnswer((_) async {});
+    final viewModel = listenTo(null)..setName('  Yeni  ');
+
+    expect(await viewModel.submit(), isTrue);
+    final saved =
+        verify(() => repository.create(captureAny())).captured.single
+            as __Model__;
+    expect(saved.name, 'Yeni');
+  });
+
+  test('düzenlemede update çağırır, id korunur', () async {
+    when(() => repository.update(any())).thenAnswer((_) async {});
+    final viewModel = listenTo(item)..setName('Değişti');
+
+    expect(await viewModel.submit(), isTrue);
+    verify(
+      () => repository.update(item.copyWith(name: 'Değişti')),
+    ).called(1);
+  });
+
+  test('hata olursa mesajı state içine yazar', () async {
+    when(() => repository.create(any()))
+        .thenAnswer((_) async => throw const NetworkException());
+    final viewModel = listenTo(null)..setName('Yeni');
+
+    expect(await viewModel.submit(), isFalse);
+    final state = container.read(__model__FormViewModelProvider(null));
+    expect(state.errorMessage, isNotNull);
+    expect(state.isSubmitting, isFalse);
+  });
+}

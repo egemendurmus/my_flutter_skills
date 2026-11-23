@@ -1,0 +1,21 @@
+import 'package:__APP__/core/constants/app_spacing.dart';
+import 'package:__APP__/core/extensions/context_extensions.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:flutter/material.dart';
+
+class __Model__DetailView extends StatelessWidget {
+  const __Model__DetailView({required this.item, super.key});
+
+  final __Model__ item;
+
+  @override
+  Widget build(BuildContext context) {
+    // TODO(flutter-kit): Modelin diğer alanlarını göster.
+    return ListView(
+      padding: AppSpacing.page,
+      children: [
+        Text(item.name, style: context.textTheme.headlineSmall),
+      ],
+    );
+  }
+}

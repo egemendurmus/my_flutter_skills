@@ -1,5 +1,19 @@
 # Değişiklikler
 
+## 1.8.0 — 2026-11-23
+
+### Yeni
+- `tests/hook_test.sh` + `tests/hook_fixtures/`: kural hook'u için hızlı testler (Flutter gerekmez). Her kural için doğru uyarı çıkıyor mu, yanlış alarm var mı; hook modu (JSON stdin) da test edilir. CI'da e2e'den önce çalışır.
+- CI artık macOS'ta da çalışır (Linux, Windows, macOS).
+
+### İyileştirmeler
+- `new_feature.sh` 1065 → ~265 satır: Dart şablonları `templates/feature/*.dart.tmpl` dosyalarına taşındı. Üretilen kod birebir aynı.
+- README: macOS / Linux / Windows (Git Bash) gereksinimleri netleşti; şablon biçimi belgelendi.
+
+### Düzeltmeler
+- Hook, yorum satırındaki `Dio()` / `FirebaseFirestore.instance` metnini de ihlal sayıyordu.
+- `tests/e2e.sh`: `grep -E '\s'` macOS'un BSD grep'inde güvenilir değil → `[[:space:]]`.
+
 ## 1.7.0 — 2026-11-23
 
 ### Yeni

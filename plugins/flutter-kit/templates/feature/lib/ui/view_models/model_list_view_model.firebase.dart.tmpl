@@ -1,0 +1,12 @@
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/repositories/__FEATURE___repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '__MODEL___list_view_model.g.dart';
+
+@riverpod
+class __Model__ListViewModel extends _$__Model__ListViewModel {
+  @override
+  Stream<List<__Model__>> build() =>
+      ref.watch(__feature__RepositoryProvider).watchAll();
+}

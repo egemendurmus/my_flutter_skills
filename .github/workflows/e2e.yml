@@ -14,11 +14,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest] # windows: hook'ların Windows yollarıyla çalışması
+        os: [ubuntu-latest, windows-latest, macos-latest] # windows: Windows yolları; macos: BSD sed/grep, bash 3.2
     runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+      - name: Hook testleri
+        shell: bash
+        run: bash tests/hook_test.sh
       - uses: subosito/flutter-action@v2
         with:
           channel: stable

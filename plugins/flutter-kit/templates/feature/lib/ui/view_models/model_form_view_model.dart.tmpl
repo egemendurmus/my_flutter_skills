@@ -1,0 +1,58 @@
+import 'package:__APP__/core/errors/app_exception.dart';
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:__APP__/features/__FEATURE__/data/repositories/__FEATURE___repository.dart';
+import 'package:__APP__/features/__FEATURE__/ui/view_models/__MODEL___list_view_model.dart'; //@b
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part '__MODEL___form_view_model.freezed.dart';
+part '__MODEL___form_view_model.g.dart';
+
+// TODO(flutter-kit): Modelin düzenlenebilir alanlarını ekle.
+@freezed
+abstract class __Model__FormState with _$__Model__FormState {
+  const factory __Model__FormState({
+    @Default('') String name,
+    @Default(false) bool isSubmitting,
+    String? errorMessage,
+  }) = ___Model__FormState;
+
+  const __Model__FormState._();
+
+  bool get canSubmit => name.trim().isNotEmpty && !isSubmitting;
+}
+
+/// [initial] null ise yeni kayıt, değilse düzenleme.
+/// Kullanım: ref.watch(__model__FormViewModelProvider(initial))
+@riverpod
+class __Model__FormViewModel extends _$__Model__FormViewModel {
+  @override
+  __Model__FormState build(__Model__? initial) =>
+      __Model__FormState(name: initial?.name ?? '');
+
+  void setName(String value) =>
+      state = state.copyWith(name: value, errorMessage: null);
+
+  /// Başarılıysa true döner; geri dönmeyi (navigasyonu) UI yapar.
+  Future<bool> submit() async {
+    if (!state.canSubmit) return false;
+    state = state.copyWith(isSubmitting: true, errorMessage: null);
+    final repository = ref.read(__feature__RepositoryProvider);
+    final name = state.name.trim();
+    try {
+      final existing = initial;
+      if (existing == null) {
+        await repository.create(__Model__(id: '', name: name));
+      } else {
+        await repository.update(existing.copyWith(name: name));
+      }
+      ref.invalidate(__model__ListViewModelProvider); //@b
+      return true;
+    } on AppException catch (e) {
+      if (ref.mounted) state = state.copyWith(errorMessage: e.message);
+      return false;
+    } finally {
+      if (ref.mounted) state = state.copyWith(isSubmitting: false);
+    }
+  }
+}

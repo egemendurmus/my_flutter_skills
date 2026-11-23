@@ -1,0 +1,19 @@
+import 'package:__APP__/features/__FEATURE__/data/models/__MODEL__.dart';
+import 'package:flutter/material.dart';
+
+class __Model__Tile extends StatelessWidget {
+  const __Model__Tile({required this.item, super.key, this.onTap});
+
+  final __Model__ item;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(item.name),
+        onTap: onTap,
+      ),
+    );
+  }
+}

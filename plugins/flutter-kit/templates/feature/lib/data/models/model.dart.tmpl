@@ -1,0 +1,16 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+part '__MODEL__.freezed.dart';
+part '__MODEL__.g.dart';
+
+// TODO(flutter-kit): Alanları gerçek veriye göre düzenle.
+@freezed
+abstract class __Model__ with _$__Model__ {
+  const factory __Model__({
+    required String id,
+    required String name,
+  }) = ___Model__;
+
+  factory __Model__.fromJson(Map<String, dynamic> json) =>
+      _$__Model__FromJson(json);
+}
