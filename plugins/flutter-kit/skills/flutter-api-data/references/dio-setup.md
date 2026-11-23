@@ -11,23 +11,21 @@ import 'package:dio/dio.dart';
 
 import 'package:my_app/core/errors/app_exception.dart';
 
-AppException mapDioException(DioException e) {
-  switch (e.type) {
-    case DioExceptionType.connectionTimeout:
-    case DioExceptionType.sendTimeout:
-    case DioExceptionType.receiveTimeout:
-    case DioExceptionType.connectionError:
-      return NetworkException('İnternet bağlantınızı kontrol edin.', e);
-    case DioExceptionType.cancel:
-      return UnknownException('İstek iptal edildi.', e);
-    case DioExceptionType.badCertificate:
-      return UnknownException('Güvenli bağlantı kurulamadı.', e);
-    case DioExceptionType.badResponse:
-      return _fromResponse(e.response);
-    case DioExceptionType.unknown:
-      return UnknownException('Beklenmeyen bir hata oluştu.', e);
-  }
-}
+// Sondaki `_`: `unknown` ve Dio'nun yeni sürümlerde eklediği tipler
+// (ör. 5.11'deki `transformTimeout`) için. Olmazsa Dio güncellenince
+// derleme kırılır.
+AppException mapDioException(DioException e) => switch (e.type) {
+      DioExceptionType.connectionTimeout ||
+      DioExceptionType.sendTimeout ||
+      DioExceptionType.receiveTimeout ||
+      DioExceptionType.connectionError =>
+        NetworkException('İnternet bağlantınızı kontrol edin.', e),
+      DioExceptionType.cancel => UnknownException('İstek iptal edildi.', e),
+      DioExceptionType.badCertificate =>
+        UnknownException('Güvenli bağlantı kurulamadı.', e),
+      DioExceptionType.badResponse => _fromResponse(e.response),
+      _ => UnknownException('Beklenmeyen bir hata oluştu.', e),
+    };
 
 AppException _fromResponse(Response<dynamic>? res) {
   final status = res?.statusCode ?? 0;
@@ -101,7 +99,11 @@ Dio dio(Ref ref) {
   dio.interceptors.addAll([
     AuthInterceptor(ref),
     if (kDebugMode)
-      LogInterceptor(requestBody: true, responseBody: true, logPrint: debugPrint),
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (o) => debugPrint(o.toString()),
+      ),
   ]);
 
   ref.onDispose(dio.close);

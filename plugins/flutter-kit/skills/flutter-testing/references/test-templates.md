@@ -247,7 +247,7 @@ void main() {
 ```dart
 final auth = MockFirebaseAuth(
   signedIn: true,
-  mockUser: MockUser(uid: 'u1', email: 'test@eliar.com.tr'),
+  mockUser: MockUser(uid: 'u1', email: 'test@example.com'),
 );
 final container = ProviderContainer.test(
   overrides: [firebaseAuthProvider.overrideWithValue(auth)],

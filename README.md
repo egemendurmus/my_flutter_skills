@@ -111,7 +111,8 @@ Projede şu sırayla okunur (yaklaşık 30 dk): `README.md` → `docs/MIMARI.md`
 ## Token tasarrufu
 
 Plugin kendi tarafında şunları yapar:
-- **Yeni özellik iskeleti script'le üretilir** (`scripts/new_feature.sh`): model, service, repository, ViewModel, ekran, widget ve 2 test dosyası tek komutla oluşur. Claude sadece alanları ve iş mantığını doldurur.
+- **Core kurulumu script'le yapılır** (`scripts/setup_core.sh`): `lib/core/`, `main.dart`, `app.dart` (20+ dosya) reference'lardaki koddan tek komutla kopyalanır.
+- **Yeni özellik iskeleti script'le üretilir** (`scripts/new_feature.sh`): model, service, repository, ViewModel, ekran, widget ve 2 test dosyası tek komutla oluşur, rota router'a eklenir. Claude sadece alanları ve iş mantığını doldurur.
 - **Gereksiz dosyalar okunmaz:** her projeye `.claude/settings.json` eklenir; `build/`, `.dart_tool/`, `ios/Pods/` ve üretilmiş `*.g.dart` / `*.freezed.dart` dosyaları Claude'a kapalıdır.
 - **Skill'ler kısa tutulur:** kurallar kısa liste halinde, ayrıntılar sadece gerektiğinde okunan `references/` dosyalarında.
 
@@ -139,7 +140,7 @@ Senin yapabileceklerin:
 
 Terminalden kullanmak istersen proje klasöründe `claude` yazman yeterli, kullanım aynı.
 
-**Gereksinimler:** macOS veya Linux (hook'lar bash script'i). `python3` varsa daha sağlam çalışır ama zorunlu değil. `dart` PATH'teyse dosyalar otomatik biçimlendirilir.
+**Gereksinimler:** macOS, Linux veya Windows'ta Git Bash (hook'lar bash script'i). `python3` varsa daha sağlam çalışır ama zorunlu değil. `dart` PATH'teyse dosyalar otomatik biçimlendirilir.
 
 ## Güncelleme
 
@@ -172,12 +173,17 @@ plugins/flutter-kit/
 ├── scripts/                        hook script'leri
 │   ├── prompt_context.sh           her istekte hatırlatma
 │   ├── check_dart_file.sh          .dart dosyası kontrolü (elle: tüm proje taraması)
-│   └── new_feature.sh              yeni özellik iskeleti (8 dosya)
+│   ├── setup_core.sh               lib/core + main/app kurulumu (reference'lardan)
+│   └── new_feature.sh              yeni özellik iskeleti (8 dosya + rota; --with-detail, --with-form)
 └── skills/<skill>/
     ├── SKILL.md                    kurallar ve adımlar
     ├── references/                 kod şablonları, örnekler
     └── scripts/                    yardımcı script'ler (varsa)
+tests/e2e.sh                        uçtan uca test (gerçek Flutter projesinde)
+.github/workflows/e2e.yml           e2e: her push + haftalık, Linux ve Windows
 ```
+
+> `setup_core.sh` kodu `references/` içindeki ```` ```dart ```` bloklarından alır: hedef yol bloğun ilk satırındaki `// lib/core/x.dart` yorumundan veya üstteki `## core/x.dart` başlığından okunur. Reference'taki bir kod bloğunu değiştirirken bu biçimi koru.
 
 ## Geliştirme
 
@@ -186,6 +192,7 @@ Bir skill'i değiştirirken:
 2. `description` satırı skill'in ne zaman devreye gireceğini belirler. Net ve anahtar kelimeli yaz.
 3. Sürümü **iki yerde** artır: `.claude-plugin/marketplace.json` ve `plugins/flutter-kit/.claude-plugin/plugin.json`. Sürüm artmazsa kullanıcılar güncellemeyi almaz.
 4. Kontrol: `claude plugin validate .` ve `claude plugin validate plugins/flutter-kit`
-5. Gerçek bir projede dene, sonra commit ve push.
+5. `bash tests/e2e.sh` — skill kodu gerçek projede derleniyor, analizden ve testten geçiyor mu (Flutter gerekir, ~3-5 dk). CI aynısını her push'ta ve haftalık çalıştırır.
+6. Commit ve push.
 
 Claude bir şeyi istemediğin şekilde yaptığında, bunu ilgili skill'e kural olarak ekle. Skill'ler bu şekilde olgunlaşır.

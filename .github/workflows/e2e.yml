@@ -1,0 +1,34 @@
+name: e2e
+
+# Skill'lerin ürettiği kod güncel Flutter ve paket sürümleriyle derleniyor mu?
+# Haftalık çalışma, paket güncellemelerinden gelen kırılmaları kullanıcıdan önce yakalar.
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1" # her pazartesi 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  e2e:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest] # windows: hook'ların Windows yollarıyla çalışması
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - name: e2e
+        shell: bash
+        run: bash tests/e2e.sh "$RUNNER_TEMP/e2e"
+      - name: Loglar
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-logs-${{ matrix.os }}
+          path: ${{ runner.temp }}/e2e/logs

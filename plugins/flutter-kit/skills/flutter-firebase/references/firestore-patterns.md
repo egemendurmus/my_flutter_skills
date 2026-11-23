@@ -110,6 +110,9 @@ AssessmentsService assessmentsService(Ref ref) =>
 
 ```dart
 // core/firebase/firebase_exception_mapper.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:my_app/core/errors/app_exception.dart';
+
 AppException mapFirebaseException(FirebaseException e) => switch (e.code) {
       'permission-denied' || 'unauthenticated' => const UnauthorizedException(
           'Bu işlem için yetkiniz yok.'),
@@ -129,8 +132,10 @@ class AssessmentsRepository {
 
   Stream<List<Assessment>> watchMine(String uid) => _service
       .watchByOwner(uid)
-      .handleError((Object e) =>
-          throw e is FirebaseException ? mapFirebaseException(e) : e);
+      .handleError(
+        (Object e) => throw mapFirebaseException(e as FirebaseException),
+        test: (e) => e is FirebaseException,
+      );
 
   Future<String> create(Assessment a) => _guard(() => _service.create(a));
   Future<void> delete(String id) => _guard(() => _service.delete(id));

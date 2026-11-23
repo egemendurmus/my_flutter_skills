@@ -1,0 +1,5 @@
+# Tüm metin dosyaları LF. Windows'ta CRLF'e çevrilen .sh dosyaları bash'te
+# "$'\r': command not found" ile kırılır; hook'lar çalışmaz.
+* text=auto eol=lf
+*.sh text eol=lf
+*.py text eol=lf

@@ -19,7 +19,7 @@ Service'leri unit test etme (Dio/Firestore'u sarmaktan başka iş yapmazlar); on
 ## Araçlar
 
 - `flutter_test` + `mocktail` (codegen'siz mock).
-- Riverpod: `ProviderContainer.test(overrides: [...])` — test bitince otomatik dispose olur.
+- Riverpod: `ProviderContainer.test(overrides: [...])` — test bitince otomatik dispose olur. `new_feature.sh` tüm Riverpod 3 sürümlerinde çalışsın diye `ProviderContainer(retry: ..., overrides: [...])` + `addTearDown(container.dispose)` üretir; ikisi eşdeğerdir, dosya içinde tek biçim kullan.
 - Widget: `ProviderScope(overrides: [...], child: MaterialApp(home: ...))`.
 - Firebase: `fake_cloud_firestore`, `firebase_auth_mocks`.
 

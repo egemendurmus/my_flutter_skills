@@ -31,6 +31,12 @@ Birden çok ortam (dev/prod) varsa iki ayrı Firebase projesi kullan; `flutterfi
 ## SDK provider'ları — core/firebase/firebase_providers.dart
 
 ```dart
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'firebase_providers.g.dart';
+
 @Riverpod(keepAlive: true)
 FirebaseFirestore firestore(Ref ref) => FirebaseFirestore.instance;
 

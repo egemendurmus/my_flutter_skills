@@ -5,7 +5,7 @@ Sırayla uygula. Her adımdan sonra hata varsa düzelt, sonra devam et.
 ## 1. Proje
 
 ```bash
-flutter create --org com.eliar --platforms android,ios <proje_adi>
+flutter create --org com.example --platforms android,ios <proje_adi>
 cd <proje_adi>
 ```
 
@@ -66,6 +66,7 @@ env/*.json
 `lib/core/config/env.dart`:
 
 ```dart
+// lib/core/config/env.dart
 abstract final class Env {
   static const apiBaseUrl = String.fromEnvironment('API_BASE_URL');
   static const appEnv = String.fromEnvironment('APP_ENV', defaultValue: 'dev');
@@ -118,45 +119,34 @@ class App extends ConsumerWidget {
 
 ## 6. Router
 
+Başlangıç router'ı hiç feature yokken de derlenir. `// flutter-kit:` işaretli satırları **silme**: `new_feature.sh` yeni feature'ın rotasını, import'unu oraya ekler ve ilk feature'ı açılış ekranı yapar.
+
 ```dart
 // lib/core/router/routes.dart
 abstract final class Routes {
-  static const splash = '/splash';
-  static const login = '/login';
-  static const register = '/register';
   static const home = '/';
-  static const orders = '/orders';
-  static const orderDetail = 'detail/:id';        // /orders altında
-  static String orderDetailPath(String id) => '/orders/detail/$id';
+  // flutter-kit:routes
 }
 ```
 
 ```dart
 // lib/core/router/app_router.dart
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:my_app/core/router/routes.dart';
-// + ekranların importları (features/.../ui/screens/...)
+// flutter-kit:imports
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_router.g.dart';
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) {
   final router = GoRouter(
-    initialLocation: Routes.orders,
+    initialLocation: Routes.home, // flutter-kit:initial
     routes: [
-      GoRoute(
-        path: Routes.orders,
-        builder: (context, state) => const OrdersScreen(),
-        routes: [
-          GoRoute(
-            path: Routes.orderDetail,
-            builder: (context, state) =>
-                OrderDetailScreen(orderId: state.pathParameters['id']!),
-          ),
-        ],
-      ),
+      // Feature eklenince ilk feature açılış ekranı olur; bu rota yer tutucu.
+      GoRoute(path: Routes.home, builder: (_, _) => const SizedBox.shrink()),
+      // flutter-kit:routes
     ],
   );
   ref.onDispose(router.dispose);
@@ -164,7 +154,29 @@ GoRouter appRouter(Ref ref) {
 }
 ```
 
-Navigasyon UI'da: `context.go(Routes.orders)`, `context.push(Routes.orderDetailPath(id))`.
+Alt rota (detay) örneği — `new_feature.sh` üretmez, elle eklenir:
+
+```text
+// routes.dart
+static const products = '/products';
+static const productDetail = 'detail/:id';                 // /products altında
+static String productDetailPath(String id) => '/products/detail/$id';
+
+// app_router.dart
+GoRoute(
+  path: Routes.products,
+  builder: (_, _) => const ProductListScreen(),
+  routes: [
+    GoRoute(
+      path: Routes.productDetail,
+      builder: (_, state) =>
+          ProductDetailScreen(productId: state.pathParameters['id']!),
+    ),
+  ],
+),
+```
+
+Navigasyon UI'da: `context.go(Routes.products)`, `context.push(Routes.productDetailPath(id))`.
 Giriş kontrolü (redirect) gerekiyorsa `flutter-firebase` skill'indeki auth redirect desenine bak; REST auth'ta aynı desen token durumuyla uygulanır.
 
 ## 7. Tema
@@ -235,7 +247,7 @@ Proje kökünde `.claude/settings.json` (projeyle commit'lenir):
 }
 ```
 
-Üretilmiş dosyalar (`*.g.dart`, `*.freezed.dart`) büyük ve tahmin edilebilir: provider adı her zaman `<sınıf/fonksiyon adı camelCase>Provider`. Codegen sorunu varsa dosyayı okumak yerine `dart run build_runner build -d` çıktısına bak. Dosya zaten varsa `permissions.deny` listesine ekle, mevcut ayarları silme.
+Üretilmiş dosyalar (`*.g.dart`, `*.freezed.dart`) büyük ve tahmin edilebilir: provider adı her zaman `<sınıf/fonksiyon adı camelCase>Provider`. Codegen sorunu varsa dosyayı okumak yerine `dart run build_runner build` çıktısına bak. Dosya zaten varsa `permissions.deny` listesine ekle, mevcut ayarları silme.
 
 ## 11. Proje CLAUDE.md
 
@@ -257,7 +269,7 @@ Bu proje flutter-kit standartlarını kullanır (feature-first + MVVM + Riverpod
 
 ## Komutlar
 - Çalıştır: flutter run --dart-define-from-file=env/dev.json
-- Codegen: dart run build_runner build -d
+- Codegen: dart run build_runner build
 - Kontrol: dart format . && flutter analyze && flutter test
 
 ## İnsanlar için dokümanlar
@@ -272,7 +284,7 @@ Bu proje flutter-kit standartlarını kullanır (feature-first + MVVM + Riverpod
 ## 12. Bitirme
 
 ```bash
-dart run build_runner build -d
+dart run build_runner build
 flutter analyze
 flutter test
 ```

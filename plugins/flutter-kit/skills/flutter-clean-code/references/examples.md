@@ -23,7 +23,7 @@ class _OrdersPageState extends State<OrdersPage> {
 
   void load() async {
     try {
-      final res = await Dio().get('https://api.eliar.com/orders');   // ağ çağrısı widget'ta
+      final res = await Dio().get('https://api.example.com/orders');   // ağ çağrısı widget'ta
       setState(() { data = res.data; loading = false; });
     } catch (e) {}                                                     // boş catch
   }

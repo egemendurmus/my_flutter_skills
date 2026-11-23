@@ -39,7 +39,7 @@ Amaç: uygulama **hiçbir an bozulmadan** yeni yapıya geçer; geçiş sürerken
 Mevcut kodu değiştirmeden eklenir:
 - Paketler (`flutter-architecture/references/project-setup.md` §2) — mevcut paketlerle sürüm çakışması varsa raporla.
 - `ProviderScope` ile `runApp` sarılır (mevcut Provider/Bloc ile yan yana çalışır).
-- `lib/core/`: `errors/app_exception.dart`, `network/` (Dio) veya `firebase/` provider'ları, `theme/` (mevcut renklerden türet — görünüm değişmesin), `constants/`, `extensions/`, `widgets/` + `CATALOG.md`.
+- `lib/core/` (`scripts/setup_core.sh --source rest|firebase` ile; `--force-entry` **verme**, mevcut `main.dart`/`app.dart` korunur — sonra `theme/`'i mevcut renklere göre düzenle): `errors/app_exception.dart`, `network/` (Dio) veya `firebase/` provider'ları, `theme/` (mevcut renklerden türet — görünüm değişmesin), `constants/`, `extensions/`, `widgets/` + `CATALOG.md`.
 - `.claude/settings.json` ile `build/`, `.dart_tool/`, `ios/Pods/` ve üretilmiş dosyaları okuma dışı bırak (`flutter-architecture/references/project-setup.md` §10d) — mevcut ayar varsa birleştir.
 - **Lint:** mevcut `analysis_options.yaml`'ı koru. `very_good_analysis`'e geçiş, kodun çoğu taşındıktan sonra ayrı bir adım (yoksa binlerce uyarı gerçek sorunları gizler).
 - **Navigasyon:** mevcut yöntem korunur; yeni ekranlar mevcut yönteme kaydedilir. go_router'a geçiş, özelliklerin çoğu taşındıktan sonra tek, ayrı bir adım.

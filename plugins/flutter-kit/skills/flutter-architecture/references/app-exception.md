@@ -8,8 +8,9 @@ sealed class AppException implements Exception {
   final String message;
   final Object? cause;
 
+  // runtimeType release derlemesinde küçültülür, güvenilmez.
   @override
-  String toString() => '$runtimeType: $message';
+  String toString() => 'AppException: $message';
 }
 
 final class NetworkException extends AppException {

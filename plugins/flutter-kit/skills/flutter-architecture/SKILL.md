@@ -39,7 +39,7 @@ Screen/Widget → ViewModel → Repository → Service → Dio / Firestore
 
 - Model: freezed (`abstract`/`sealed` class). Provider: `@riverpod` codegen, fonksiyonda `Ref ref`; uygulama ömürlü olanlar `keepAlive: true`.
 - ViewModel `AsyncValue.guard`; UI `AsyncValue`'yu `switch` ile tam ele alır; mesaj `AppException.message`'dan. Async sonrası `if (!ref.mounted) return;`.
-- `.g.dart`/`.freezed.dart` elle düzenlenmez; değişiklikten sonra `dart run build_runner build -d` ve `flutter analyze`.
+- `.g.dart`/`.freezed.dart` elle düzenlenmez; değişiklikten sonra `dart run build_runner build` ve `flutter analyze`.
 - Desenler: `references/riverpod-patterns.md`. Temiz kod sınırları: `flutter-clean-code`.
 
 ## Hangi iş, hangi skill

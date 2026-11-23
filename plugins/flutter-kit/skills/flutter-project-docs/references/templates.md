@@ -20,7 +20,7 @@ Son güncelleme: <YYYY-AA-GG>
 3. Paketler ve kod üretimi:
    ```bash
    flutter pub get
-   dart run build_runner build -d
+   dart run build_runner build
    ```
 4. Çalıştır: `flutter run --dart-define-from-file=env/dev.json`
 
@@ -28,7 +28,7 @@ Son güncelleme: <YYYY-AA-GG>
 
 | İş | Komut |
 |---|---|
-| Kod üretimi (model/provider değişince) | `dart run build_runner build -d` |
+| Kod üretimi (model/provider değişince) | `dart run build_runner build` |
 | Kod üretimini izle | `dart run build_runner watch -d` |
 | Biçimlendir | `dart format .` |
 | Analiz | `flutter analyze` |
@@ -125,7 +125,7 @@ Her özellik `lib/features/<özellik>/` altında kendi klasöründe durur; için
 - Ekran veri çekmez; ViewModel üzerinden gider.
 - Dosya ≤ 300 satır, `build` ≤ 60 satır; büyüyorsa widget'lara böl.
 - Gömülü renk/padding/metin yok.
-- Model ve provider değişince `dart run build_runner build -d`.
+- Model ve provider değişince `dart run build_runner build`.
 - Commit öncesi: `dart format . && flutter analyze && flutter test`.
 ~~~
 
@@ -149,7 +149,7 @@ Son güncelleme: <YYYY-AA-GG>
 5. **ViewModel:** `ui/view_models/<ekran>_view_model.dart` — `@riverpod` sınıfı. Örnek: `<...>`
 6. **Ekran:** `ui/screens/<ekran>_screen.dart` — `ConsumerWidget`, loading/hata/boş durumları `AppLoadingView` / `AppErrorView` / `AppEmptyView` ile.
 7. **Rota:** `core/router/routes.dart`'a sabit, `app_router.dart`'a `GoRoute` ekle.
-8. **Kod üretimi:** `dart run build_runner build -d`
+8. **Kod üretimi:** `dart run build_runner build`
 9. **Test:** `test/features/<yeni_ozellik>/` altına en az repository ve ViewModel testi.
 10. **Kontrol:** `dart format . && flutter analyze && flutter test`
 11. **Doküman:** `docs/MIMARI.md` → Özellikler tablosuna satır ekle.

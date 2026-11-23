@@ -15,14 +15,31 @@ if [ -n "$1" ]; then
   case "$file" in /*) ;; *) file="$project_dir/$file" ;; esac
 else
 input="$(cat)"
-if command -v python3 >/dev/null 2>&1; then
-  file="$(printf '%s' "$input" | python3 -c "import json,sys
+# Windows'ta python3 çoğu zaman Microsoft Store kısayoludur: gerçekten çalışanı seç.
+py=""
+for c in python3 python; do
+  if command -v "$c" >/dev/null 2>&1 && [ "$("$c" -c 'print(1)' 2>/dev/null)" = "1" ]; then py="$c"; break; fi
+done
+if [ -n "$py" ]; then
+  file="$(printf '%s' "$input" | "$py" -c "import json,sys
 try: print(json.load(sys.stdin).get('tool_input',{}).get('file_path',''))
 except Exception: pass" 2>/dev/null)"
 else
-  file="$(printf '%s' "$input" | sed -n 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)"
+  # JSON'da \\ olarak kaçışlanmış ters eğik çizgiyi teke indir
+  file="$(printf '%s' "$input" | sed -n 's/.*"file_path"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1 | sed 's/\\\\/\\/g')"
 fi
 fi
+
+# Windows yollarını normalize et: C:\a\b → /c/a/b (Git Bash biçimi), sondaki \r'yi at
+to_unix() {
+  p="$(printf '%s' "$1" | tr -d '\r' | sed 's|\\|/|g')"
+  case "$p" in
+    [A-Za-z]:/*) p="/$(printf '%s' "${p:0:1}" | tr '[:upper:]' '[:lower:]')${p:2}" ;;
+  esac
+  printf '%s' "$p"
+}
+file="$(to_unix "$file")"
+project_dir="$(to_unix "$project_dir")"
 
 # Sadece lib/ altındaki elle yazılmış .dart dosyaları
 case "$file" in

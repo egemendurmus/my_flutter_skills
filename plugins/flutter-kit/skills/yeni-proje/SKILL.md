@@ -10,7 +10,7 @@ Bu skill bir **sıralı kontrol listesidir**; diğer skill'leri doğru sırada �
 
 ## 0. Netleştir (eksikse tek mesajda sor)
 
-- Proje adı (`snake_case`) ve org (varsayılan `com.eliar`)
+- Proje adı (`snake_case`) ve org (varsayılan `com.example`)
 - Platformlar (varsayılan: android, ios)
 - Backend: REST API mi (adres?), Firebase mi, henüz yok mu (yoksa sahte/mock repository ile başla)
 - İlk özellikler (ör. barkod okuma, ürün listesi, stok hareketi) — en fazla 2-3 ile başla
@@ -22,10 +22,14 @@ Kullanıcı "sen karar ver" derse varsayılanları kullan ve sonunda listele.
 
 `flutter-architecture/references/project-setup.md` adımlarını **sırayla, eksiksiz** uygula:
 1. `flutter create --org <org> --platforms <platformlar> <ad>`
-2. **Varsayılan sayaç örneğini sil:** `lib/main.dart` içeriğini project-setup §5'teki bootstrap ile değiştir, `test/widget_test.dart`'ı sil.
+2. `test/widget_test.dart`'ı sil.
 3. Paketler, `analysis_options.yaml`, env dosyaları + `.gitignore`
-4. `lib/core/`: config, constants, errors (`app-exception.md`), extensions, network veya firebase, router, theme, widgets + `CATALOG.md` (`flutter-ui-components/references/core-widgets.md`)
-5. `lib/main.dart`, `lib/app.dart`
+4. **`lib/core/`, `lib/main.dart`, `lib/app.dart` — script ile, dosyaları elle yazma.** Plugin kökü bu skill dizininin iki üstüdür:
+   ```bash
+   bash "<bu skill dizini>/../../scripts/setup_core.sh" --source rest|firebase --force-entry
+   ```
+   `--force-entry` sayaç örneğini (`main.dart`) bootstrap ile değiştirir. Script reference'lardaki kodu kopyalar ve eksik paketleri listeler. Firebase ise ardından `flutterfire configure` ve `main.dart`'a `Firebase.initializeApp` (`flutter-firebase`).
+5. `lib/core/widgets/CATALOG.md` (`flutter-ui-components/references/catalog-format.md`)
 6. `.claude/settings.json` — üretilmiş dosyaları ve build klasörlerini okuma dışı bırak (project-setup §10d)
 
 Bu adım bitmeden özellik yazmaya başlama.
@@ -41,7 +45,7 @@ Her özellik için `new_feature.sh` script'iyle iskelet üret, sonra doldur (ad�
 ## 4. Doğrulama
 
 ```bash
-dart run build_runner build -d
+dart run build_runner build
 dart format .
 flutter analyze
 flutter test

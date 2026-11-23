@@ -196,6 +196,10 @@ def scan(root: Path, min_lines: int, max_file_lines: int) -> tuple[list[Block], 
 
 
 def main() -> int:
+    # Windows konsolu (cp1252) Türkçe karakterde UnicodeEncodeError verir.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("path", type=Path, help="Taranacak klasör (genelde lib/)")
     parser.add_argument("--min-similarity", type=float, default=0.8)

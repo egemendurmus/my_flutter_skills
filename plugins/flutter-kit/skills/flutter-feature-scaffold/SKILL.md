@@ -16,23 +16,32 @@ description: "Flutter projesine yeni özellik/ekran ekler. İskeleti script ile 
 Plugin kökü bu skill dizininin iki üstüdür:
 
 ```bash
-bash "<bu skill dizini>/../../scripts/new_feature.sh" <feature> [--model <tekil_ad>] [--source rest|firebase]
+bash "<bu skill dizini>/../../scripts/new_feature.sh" <feature> [--model <tekil_ad>] [--source rest|firebase] [--with-detail] [--with-form]
 ```
 
-8 dosya oluşur: model, service, repository, liste ViewModel'i, liste ekranı, tile widget'ı, repository ve ViewModel testleri. Var olan dosyaya dokunmaz. Script eksik `core/` dosyası bildirirse önce onları kur (`flutter-architecture/references/project-setup.md`).
+Kullanıcı detay veya form istediyse bayrağı ver; sonradan elle yazma.
+
+| Bayrak | Ek dosyalar |
+|---|---|
+| (yok) — 8 dosya | model, service, repository, liste ViewModel'i, liste ekranı, tile, repository + ViewModel testleri |
+| `--with-detail` +4 | detay ViewModel'i (family), detay ekranı, detay widget'ı, test; listeden tıklayınca açılır |
+| `--with-form` +4 | form state + ViewModel (oluştur/düzenle), form ekranı, form widget'ı, test; service/repository'ye `create`/`update`, listede "+" butonu, detayda düzenle butonu |
+
+Var olan dosyaya dokunmaz. Script eksik `core/` dosyası bildirirse önce `scripts/setup_core.sh` çalıştır.
+
+Rota: router'da `// flutter-kit:` işaretleri varsa script liste rotasını ve detay/form alt rotalarını kendisi ekler (çıktıdaki "Rota:" satırı). İşaret yoksa (ör. taşınan proje) rotaları elle ekle (`project-setup.md` §6); script bu durumda ekranlara navigasyon satırı koymaz, rotayı ekleyince bağla.
 
 ## 3. Doldur
 
 - Model alanları (`TODO(flutter-kit)` satırları), endpoint yolu / koleksiyon adı
-- Tile'da gösterilecek alanlar
+- Tile'da, detay widget'ında ve formda gösterilecek alanlar (form state'ine alan + setter ekle)
 - Test verisindeki örnek nesneyi yeni alanlara göre güncelle
-- Detay ekranı, form, silme gibi script'in üretmediği parçalar: deseni `references/feature-template.md`'den al (sadece gerektiğinde oku)
-- Rota: `core/router/routes.dart` + `app_router.dart`
+- Silme gibi script'in üretmediği parçalar: deseni `references/feature-template.md`'den al (sadece gerektiğinde oku)
 
 ## 4. Kontrol
 
 ```bash
-dart run build_runner build -d && dart fix --apply && dart format .
+dart run build_runner build && dart fix --apply && dart format .
 flutter analyze
 flutter test test/features/<feature>
 ```

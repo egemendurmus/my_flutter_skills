@@ -4,6 +4,8 @@
 
 input="$(cat)"
 project_dir="${CLAUDE_PROJECT_DIR:-$PWD}"
+project_dir="${project_dir//$'\r'/}"
+project_dir="${project_dir//\\//}"  # Windows: C:\a\b → C:/a/b (Git Bash bunu okuyabilir)
 
 json_field() {
   # $1: alan adı. python3 varsa doğru parse, yoksa kaba sed.
